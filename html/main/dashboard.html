@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FinTrack - Дашборд</title>
+    <link
+      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/project-lvrmmm/css/main/dashboard.css" />
+
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="/project-lvrmmm/images/icon-logo.png"
+    />
+  </head>
+  <body>
+    <!-- Боковое меню -->
+    <div class="sidebar">
+      <div class="logo">
+        <img src="/project-lvrmmm/images/logo.png" alt="FinTrack" />
+        <p>FinTrack</p>
+      </div>
+      <ul class="main">
+        <li class="active">
+          <a href="#">
+            <i class="bx bxs-dashboard"></i>
+            <span>Дашборд</span>
+          </a>
+        </li>
+        <li>
+          <a href="#">
+            <i class="bx bx-transfer-alt"></i>
+            <span>Транзакции</span>
+          </a>
+        </li>
+        <li>
+          <a href="#">
+            <i class="bx bx-stats"></i>
+            <span>Статистика</span>
+          </a>
+        </li>
+        <li>
+          <a href="#">
+            <i class="bx bx-calendar"></i>
+            <span>Календарь</span>
+          </a>
+        </li>
+        <li>
+          <a href="#">
+            <i class="bx bxs-star-half"></i>
+            <span>Цели</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Верхнее меню -->
+    <div class="header">
+      <div class="greeting">
+        <h1 id="greeting-text">Добрый день, Мария!</h1>
+      </div>
+      <div class="header-right">
+        <div class="notifications">
+          <i class="bx bx-bell"></i>
+          <span class="notification-badge">3</span>
+          <div class="notifications-dropdown">
+            <div class="notification-item">
+              <i class="bx bx-wallet"></i>
+              <p>Бюджет на продукты почти исчерпан</p>
+            </div>
+            <div class="notification-item">
+              <i class="bx bx-check-circle"></i>
+              <p>Цель "Новый телефон" выполнена на 75%</p>
+            </div>
+          </div>
+        </div>
+        <div class="profile">
+          <a href="/project-lvrmmm/html/main/profile.html">
+            <img src="/project-lvrmmm/images/avatar.png" alt="Профиль"
+          /></a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Основное содержимое -->
+    <div class="main-content">
+      <!-- Колонка 1 -->
+      <div class="column-1">
+        <!-- Общий баланс -->
+        <div class="balance-card">
+          <div class="balance-header">
+            <h2>Общий баланс</h2>
+            <button id="currency-toggle" class="currency-toggle">₽</button>
+          </div>
+          <div class="balance-amount">
+            <span id="total-balance">245,780.50</span>
+            <span id="currency-symbol">₽</span>
+          </div>
+          <div class="balance-details">
+            <div class="balance-item">
+              <span>Наличные:</span>
+              <span class="amount" data-original="45000">45,000.00 ₽</span>
+            </div>
+            <div class="balance-item">
+              <span>Банковская карта:</span>
+              <span class="amount" data-original="150780.50">150,780.50 ₽</span>
+            </div>
+            <div class="balance-item">
+              <span>Сберегательный счет:</span>
+              <span class="amount" data-original="50000">50,000.00 ₽</span>
+            </div>
+          </div>
+          <a href="#" class="more-link">Подробнее</a>
+        </div>
+
+        <!-- Прогресс за неделю -->
+        <div class="progress-card">
+          <div class="progress-header">
+            <h2>Прогресс за неделю</h2>
+            <a href="#" class="more-link">Больше</a>
+          </div>
+          <div class="progress-chart">
+            <canvas id="weeklyProgressChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Колонка 2 -->
+      <div class="column-2">
+        <!-- Транзакции -->
+        <div class="transactions-card">
+          <div class="card-header">
+            <h2>Транзакции</h2>
+            <a href="#" class="more-link">Больше</a>
+          </div>
+          <div class="transactions-chart">
+            <canvas id="transactionsChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Предстоящие платежи -->
+        <div class="payments-card">
+          <div class="card-header">
+            <h2>Предстоящие платежи</h2>
+            <a href="#" class="more-link">Больше</a>
+          </div>
+          <div class="payments-list">
+            <div class="payment-item">
+              <div class="payment-date">15.04</div>
+              <div class="payment-info">
+                <h3>Аренда квартиры</h3>
+                <p>Ежемесячный платеж</p>
+              </div>
+              <div class="payment-amount">-25,000 ₽</div>
+            </div>
+            <div class="payment-item">
+              <div class="payment-date">20.04</div>
+              <div class="payment-info">
+                <h3>Интернет</h3>
+                <p>Оплата за апрель</p>
+              </div>
+              <div class="payment-amount">-1,200 ₽</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Последние транзакции -->
+        <div class="recent-transactions-card">
+          <div class="card-header">
+            <h2>Последние транзакции</h2>
+            <a href="#" class="more-link">Больше</a>
+          </div>
+          <div class="transactions-list">
+            <div class="transaction-item">
+              <div class="transaction-icon">
+                <i class="bx bx-shopping-bag"></i>
+              </div>
+              <div class="transaction-details">
+                <div class="transaction-header">
+                  <h3>Продукты</h3>
+                  <span class="transaction-amount expense">-3,450 ₽</span>
+                </div>
+                <p>Супермаркет "Пятерочка"</p>
+                <span class="transaction-date">12.04.2023</span>
+              </div>
+            </div>
+            <div class="transaction-item">
+              <div class="transaction-icon">
+                <i class="bx bx-credit-card"></i>
+              </div>
+              <div class="transaction-details">
+                <div class="transaction-header">
+                  <h3>Зарплата</h3>
+                  <span class="transaction-amount income">+85,000 ₽</span>
+                </div>
+                <p>Апрельская зарплата</p>
+                <span class="transaction-date">10.04.2023</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Колонка 3 -->
+      <div class="column-3">
+        <!-- Финансовые цели -->
+        <div class="goals-card">
+          <div class="card-header">
+            <h2>Финансовые цели</h2>
+            <a href="#" class="more-link">Больше</a>
+          </div>
+          <div class="goals-list">
+            <div class="goal-item">
+              <div class="goal-info">
+                <h3>Новый телефон</h3>
+                <span class="goal-progress">75,000 / 100,000 ₽</span>
+              </div>
+              <div class="progress-bar">
+                <div class="progress" style="width: 75%"></div>
+              </div>
+            </div>
+            <div class="goal-item">
+              <div class="goal-info">
+                <h3>Отпуск</h3>
+                <span class="goal-progress">45,000 / 150,000 ₽</span>
+              </div>
+              <div class="progress-bar">
+                <div class="progress" style="width: 30%"></div>
+              </div>
+            </div>
+          </div>
+          <div class="motivation-block">
+            <p id="motivation-text">Каждая копейка приближает вас к цели!</p>
+          </div>
+        </div>
+
+        <!-- Прогресс за месяц -->
+        <div class="monthly-card">
+          <div class="card-header">
+            <h2>Прогресс за месяц</h2>
+            <div class="header-actions">
+              <i class="bx bx-download download-btn" title="Экспорт данных"></i>
+              <a href="#" class="more-link">Больше</a>
+            </div>
+          </div>
+          <div class="monthly-chart">
+            <canvas id="monthlyChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="/project-lvrmmm/scipt/main/dashboard.js"></script>
+  </body>
+</html>
