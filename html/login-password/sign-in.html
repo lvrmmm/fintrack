@@ -19,46 +19,66 @@
       href="/project-lvrmmm/images/icon-logo.png"
     />
   </head>
-  <body>
-    <div class="signInForm">
-      <form action="">
+  <body class="auth-page">
+    <main class="auth-container">
+      <form class="auth-form">
         <a
           href="/project-lvrmmm/html/lending/lending.html"
-          class="form-img-link"
+          class="auth-form__logo-link"
         >
           <img
-            class="form-img"
+            class="auth-form__logo"
             src="/project-lvrmmm/images/logo.png"
-            alt="Logo"
+            alt="Логотип FinTrack"
           />
         </a>
-        <h1>Вход в аккаунт</h1>
-        <div class="input-box">
-          <input type="text" placeholder="Введите логин" required />
-          <i class="bx bx-user-pin"></i>
+        <h1 class="auth-form__title">Вход в аккаунт</h1>
+
+        <div class="auth-form__input-group">
+          <div class="auth-form__input-box">
+            <input
+              type="text"
+              class="auth-form__input"
+              placeholder="Введите логин"
+              required
+            />
+            <i class="auth-form__icon bx bx-user-pin"></i>
+          </div>
+
+          <div class="auth-form__input-box">
+            <input
+              type="password"
+              class="auth-form__input"
+              placeholder="Введите пароль"
+              required
+            />
+            <i class="auth-form__icon bx bx-lock-alt"></i>
+          </div>
         </div>
-        <div class="input-box">
-          <input type="password" placeholder="Введите пароль" required />
-          <i class="bx bx-lock-alt"></i>
-        </div>
-        <div class="remember">
-          <label for="">
-            <input type="checkbox" />
-            Запомнить пароль
+
+        <div class="auth-form__options">
+          <label class="auth-form__remember">
+            <input type="checkbox" class="auth-form__checkbox" />
+            <span class="auth-form__remember-text">Запомнить пароль</span>
           </label>
-          <a href="#" id="forgot-password">Забыли пароль?</a>
+          <a href="#" class="auth-form__forgot-password">Забыли пароль?</a>
         </div>
-        <button type="submit" class="btn">Войти</button>
-        <div class="register-link">
-          <p>
+
+        <button type="submit" class="auth-form__submit-btn">Войти</button>
+
+        <div class="auth-form__footer">
+          <p class="auth-form__footer-text">
             Ещё не зарегистрированы?
-            <a href="/project-lvrmmm/html/login-password/sign-up.html"
-              >Создать аккаунт</a
+            <a
+              href="/project-lvrmmm/html/login-password/sign-up.html"
+              class="auth-form__footer-link"
             >
+              Создать аккаунт
+            </a>
           </p>
         </div>
       </form>
-    </div>
+    </main>
     <script src="/project-lvrmmm/scipt/login-password/profile.js"></script>
   </body>
 </html>

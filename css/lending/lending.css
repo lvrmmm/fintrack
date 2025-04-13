@@ -1,15 +1,15 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@600;700&display=swap");
+.page {
+  background-color: #ffffff;
+  color: #2c3e50;
+  line-height: 1.6;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
-}
-
-body {
-  background-color: #ffffff;
-  color: #2c3e50;
-  line-height: 1.6;
 }
 
 .wrapper {
@@ -26,7 +26,7 @@ body {
 .header {
   background-color: #ffffff;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-  position: fixed;
+  position: sticky;
   width: 100%;
   z-index: 100;
 }
@@ -67,6 +67,10 @@ body {
   list-style: none;
   align-items: center;
   gap: 25px;
+}
+
+.nav-list__item {
+  list-style: none;
 }
 
 .nav-link {
@@ -121,6 +125,9 @@ body {
 .burger-menu {
   display: none;
   cursor: pointer;
+}
+
+.burger-menu__icon {
   font-size: 24px;
   color: #2c3e50;
 }
@@ -172,7 +179,7 @@ body {
   border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
-.main-image img {
+.main-image__img {
   width: 100%;
   display: block;
 }
@@ -194,13 +201,13 @@ body {
   padding: 0 20px;
 }
 
-.stat-number {
+.stat-item__number {
   font-size: 48px;
   font-weight: 700;
   margin-bottom: 10px;
 }
 
-.stat-text {
+.stat-item__text {
   font-size: 18px;
   opacity: 0.9;
 }
@@ -215,14 +222,14 @@ body {
   margin-bottom: 60px;
 }
 
-.block-title h2 {
+.block-title__heading {
   font-size: 40px;
   color: #2041ff;
   margin-bottom: 15px;
   font-weight: 700;
 }
 
-.block-title p {
+.block-title__description {
   color: #2c3e50;
   max-width: 600px;
   margin: 0 auto;
@@ -250,7 +257,7 @@ body {
   box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
 }
 
-.feature-icon {
+.feature-card__icon {
   width: 60px;
   height: 60px;
   background-color: #2041ff;
@@ -263,14 +270,14 @@ body {
   margin-bottom: 25px;
 }
 
-.feature-card h3 {
+.feature-card__title {
   font-size: 24px;
   margin-bottom: 15px;
   color: #2041ff;
   font-weight: 600;
 }
 
-.feature-card p {
+.feature-card__description {
   color: #2c3e50;
   opacity: 0.8;
   font-size: 16px;
@@ -296,21 +303,24 @@ body {
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
 }
 
-.step-number {
+.step__number {
   font-size: 32px;
   font-weight: 700;
   color: #2041ff;
   margin-bottom: 15px;
 }
 
-.step-content h3 {
+.step__content {
+  font-size: 18px;
+}
+
+.step__title {
   font-size: 32px;
   margin-bottom: 15px;
   font-weight: 600;
 }
 
-.step-content p {
-  font-size: 18px;
+.step__description {
   opacity: 0.8;
   color: #2c3e50;
 }
@@ -331,19 +341,24 @@ body {
   flex: 1;
 }
 
-.demo-text h2 {
+.demo-text__title {
   font-size: 40px;
   margin-bottom: 20px;
   color: #2041ff;
   font-weight: 600;
 }
 
-.demo-text p {
+.demo-text__paragraph {
   color: #2c3e50;
   margin-bottom: 30px;
   opacity: 0.8;
   font-size: 22px;
   line-height: 1.6;
+}
+
+.demo-text__highlight {
+  color: blue;
+  font-weight: 600;
 }
 
 .demo-video {
@@ -354,7 +369,7 @@ body {
   position: relative;
 }
 
-.demo-video img {
+.demo-video__image {
   width: 100%;
   display: block;
 }
@@ -398,20 +413,20 @@ body {
   text-align: center;
 }
 
-.cta-block h2 {
+.cta-block__title {
   font-size: 40px;
   margin-bottom: 20px;
   font-weight: 600;
 }
 
-.cta-block p {
+.cta-block__description {
   max-width: 600px;
   margin: 0 auto 40px;
   font-size: 18px;
   opacity: 0.9;
 }
 
-.cta-block .btn {
+.cta-block__btn {
   background-color: #ffffff;
   color: #2041ff;
   font-weight: 600;
@@ -419,7 +434,7 @@ body {
   font-size: 18px;
 }
 
-.cta-block .btn:hover {
+.cta-block__btn:hover {
   background-color: #f0f0f0;
 }
 
@@ -437,18 +452,24 @@ body {
   margin-bottom: 60px;
 }
 
-.footer-col h3 {
+.footer-col__title {
   font-size: 18px;
   margin-bottom: 20px;
   color: #ffffff;
   font-weight: 600;
 }
 
+.footer-col__description {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 16px;
+  line-height: 1.6;
+}
+
 .footer-links {
   list-style: none;
 }
 
-.footer-links li {
+.footer-links__item {
   margin-bottom: 12px;
 }
 
@@ -456,6 +477,7 @@ body {
   color: rgba(255, 255, 255, 0.8);
   text-decoration: none;
   transition: color 0.3s;
+  font-size: 16px;
 }
 
 .footer-link:hover {
@@ -527,7 +549,7 @@ body {
     padding: 30px;
   }
 
-  .step-content h3 {
+  .step__title {
     font-size: 24px;
   }
 }

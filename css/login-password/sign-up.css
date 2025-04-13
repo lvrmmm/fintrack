@@ -1,58 +1,56 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@600;700&display=swap");
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: "Inter", Arial;
-}
-
-body {
-  background-color: #f8f9fa;
+.registration-page {
+  background: linear-gradient(43deg, #5d85fd, #ffffff, #e7adcd);
   color: #2c3e50;
   min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 20px;
-  background: -webkit-linear-gradient(43deg, #5d85fd, #ffffff, #e7adcd);
-  background: linear-gradient(43deg, #5d85fd, #ffffff, #e7adcd);
+  font-family: "Inter", Arial, sans-serif;
+  box-sizing: border-box;
 }
 
-.container {
+/* Основной контейнер */
+.registration-container {
   display: flex;
   gap: 40px;
   max-width: 1200px;
   width: 100%;
   justify-content: center;
   align-items: center;
+  padding: 20px;
+  box-sizing: border-box;
 }
 
-.features {
+/* Секция с преимуществами */
+.registration-features {
   flex: 1;
   min-width: 300px;
   max-width: 500px;
   padding: 20px;
+  box-sizing: border-box;
 }
 
-.features h1 {
+.registration-features__title {
   font-size: 36px;
   margin-bottom: 16px;
   color: #2041ff;
   font-weight: 700;
 }
 
-.subtitle {
+.registration-features__subtitle {
   color: #2c3e50;
   margin-bottom: 24px;
   font-size: 16px;
   opacity: 0.8;
 }
 
-.features-accordion {
+.registration-features__accordion {
   margin-top: 32px;
 }
 
-.features-summary {
+.registration-accordion__summary {
   display: inline-flex;
   align-items: center;
   color: #2041ff;
@@ -63,32 +61,29 @@ body {
   transition: color 0.2s;
 }
 
-.features-summary:hover {
+.registration-accordion__summary:hover {
   color: #1a36d4;
   text-decoration: underline;
 }
 
-.features-summary::marker {
-  display: none;
-}
-
-.features-summary::after {
+.registration-accordion__summary::after {
   content: " ➤";
   margin-left: 4px;
   transition: transform 0.2s;
 }
 
-details[open] .features-summary::after {
+details[open] .registration-accordion__summary::after {
   content: " ▼";
 }
 
-.features-list {
+/* Список преимуществ */
+.registration-features-list {
   margin-top: 20px;
   padding: 0;
   list-style: none;
 }
 
-.feature-item {
+.registration-features-item {
   display: flex;
   margin-bottom: 20px;
   padding-bottom: 20px;
@@ -96,13 +91,13 @@ details[open] .features-summary::after {
   align-items: flex-start;
 }
 
-.feature-item:last-child {
+.registration-features-item:last-child {
   border-bottom: none;
   margin-bottom: 0;
   padding-bottom: 0;
 }
 
-.feature-icon {
+.registration-features-item__icon {
   color: #e7adcd;
   font-weight: bold;
   margin-right: 12px;
@@ -111,13 +106,12 @@ details[open] .features-summary::after {
   margin-top: 3px;
 }
 
-.feature-content {
+.registration-features-item__content {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
 }
 
-.feature-title {
+.registration-features-item__title {
   font-weight: 600;
   display: block;
   margin-bottom: 4px;
@@ -125,14 +119,15 @@ details[open] .features-summary::after {
   font-size: 16px;
 }
 
-.feature-desc {
+.registration-features-item__desc {
   color: #2c3e50;
   font-size: 14px;
   line-height: 1.5;
   opacity: 0.8;
 }
 
-.signUpForm {
+/* Форма регистрации */
+.registration-form {
   flex: 1;
   min-width: 300px;
   max-width: 400px;
@@ -140,43 +135,54 @@ details[open] .features-summary::after {
   border-radius: 12px;
   padding: 32px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  box-sizing: border-box;
 }
 
-.signUpForm h1 {
-  font-size: 32px;
-  color: #2041ff;
-  text-align: center;
-  margin-bottom: 24px;
-  font-weight: 700;
-}
-.signUpForm form {
+.registration-form__container {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  width: 100%;
 }
-.signUpForm .form-img-link {
+
+.registration-form__logo-link {
   display: block;
   text-align: center;
   margin-bottom: 20px;
   transition: transform 0.3s ease;
 }
 
-.signUpForm .form-img-link:hover {
+.registration-form__logo-link:hover {
   transform: scale(1.05);
 }
 
-.signUpForm .form-img {
+.registration-form__logo {
   width: 50px;
   height: 50px;
   cursor: pointer;
 }
 
-.input-box {
-  position: relative;
-  margin-bottom: 20px;
+.registration-form__title {
+  font-size: 32px;
+  color: #2041ff;
+  text-align: center;
+  margin-bottom: 24px;
+  font-weight: 700;
 }
 
-.input-box input {
+/* Группа полей ввода */
+.registration-form__input-group {
+  margin-bottom: 16px;
+  width: 100%;
+}
+
+/* Поле ввода */
+.registration-form__input-box {
+  position: relative;
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+.registration-form__input {
   width: 100%;
   height: 48px;
   padding: 12px 16px 12px 40px;
@@ -185,15 +191,16 @@ details[open] .features-summary::after {
   font-size: 14px;
   transition: border-color 0.2s, box-shadow 0.2s;
   background-color: #f8f9fa;
+  box-sizing: border-box;
 }
 
-.input-box input:focus {
+.registration-form__input:focus {
   outline: none;
   border-color: #2041ff;
   box-shadow: 0 0 0 3px rgba(32, 65, 255, 0.1);
 }
 
-.input-box i {
+.registration-form__input-icon {
   position: absolute;
   left: 16px;
   top: 50%;
@@ -203,7 +210,8 @@ details[open] .features-summary::after {
   opacity: 0.6;
 }
 
-.btn {
+/* Кнопка отправки */
+.registration-form__submit-btn {
   width: 100%;
   height: 48px;
   background-color: #2041ff;
@@ -215,13 +223,15 @@ details[open] .features-summary::after {
   cursor: pointer;
   transition: background-color 0.2s;
   margin-top: 16px;
+  box-sizing: border-box;
 }
 
-.btn:hover {
-  background-color: #e7adcd;
+.registration-form__submit-btn:hover {
+  background-color: #1a36d4;
 }
 
-.login-link {
+/* Футер формы */
+.registration-form__footer {
   text-align: center;
   margin-top: 24px;
   font-size: 14px;
@@ -229,33 +239,68 @@ details[open] .features-summary::after {
   opacity: 0.8;
 }
 
-.login-link a {
+.registration-form__footer-text {
+  margin: 0;
+}
+
+.registration-form__footer-link {
   color: #2041ff;
   text-decoration: none;
   font-weight: 600;
 }
 
-.login-link a:hover {
+.registration-form__footer-link:hover {
   text-decoration: underline;
 }
 
+/* Адаптивность */
 @media (max-width: 768px) {
-  .container {
+  .registration-container {
     flex-direction: column;
     gap: 20px;
+    padding: 10px;
   }
 
-  .features,
-  .signUpForm {
+  .registration-features,
+  .registration-form {
     max-width: 100%;
     width: 100%;
+    padding: 20px;
   }
 
-  .features {
-    padding: 0;
+  .registration-features {
+    text-align: center;
   }
 
-  .signUpForm {
-    margin-top: 20px;
+  .registration-form {
+    margin-top: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .registration-page {
+    padding: 10px;
+  }
+
+  .registration-form {
+    padding: 20px 15px;
+  }
+
+  .registration-features__title {
+    font-size: 28px;
+  }
+
+  .registration-form__title {
+    font-size: 26px;
+    margin-bottom: 20px;
+  }
+
+  .registration-form__input {
+    padding: 12px 16px 12px 36px;
+  }
+
+  .registration-form__input-icon {
+    left: 12px;
+    font-size: 16px;
   }
 }
