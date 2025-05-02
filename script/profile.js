@@ -44,7 +44,7 @@ document.addEventListener("DOMContentLoaded", function () {
   logoutBtn.addEventListener("click", function () {
     if (confirm("Вы уверены, что хотите выйти из профиля?")) {
       // Здесь будет логика выхода
-      window.location.href = "../login-password/sign-in.html";
+      window.location.href = "./sign-in.html";
     }
   });
 
