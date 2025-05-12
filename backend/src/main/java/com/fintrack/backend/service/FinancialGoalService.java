@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
@@ -29,27 +30,23 @@ public class FinancialGoalService {
     private final FinancialGoalMapper financialGoalMapper;
 
     public List<FinancialGoalDto> getUserGoals(Long userId) {
-        User user = getUserById(userId);  // Получаем пользователя по его id
+        User user = getUserById(userId);
         return goalRepository.findByUser(user).stream()
-                .map(this::toDto)
+                .map(financialGoalMapper::toDto)
                 .toList();
     }
 
     public FinancialGoalDto createGoal(Long userId, FinancialGoalDto dto) {
         User user = getUserById(userId);
-        FinancialGoal goal = FinancialGoal.builder()
-                .name(dto.getName())
-                .targetAmount(dto.getTargetAmount())
-                .currentAmount(dto.getCurrentAmount() != null ? dto.getCurrentAmount() : BigDecimal.ZERO)
-                .deadline(dto.getDeadline())
-                .isCompleted(false)
-                .priority(dto.getPriority() != null ? dto.getPriority() : Priority.MEDIUM)
-                .notes(dto.getNotes())
-                .type(dto.getType() != null ? dto.getType() : GoalType.SAVING)
-                .user(user)
-                .build();
+        FinancialGoal goal = financialGoalMapper.toEntity(dto, user);
+        // Проставим значения по умолчанию
+        if (goal.getCurrentAmount() == null) goal.setCurrentAmount(BigDecimal.ZERO);
+        if (goal.getPriority() == null) goal.setPriority(Priority.MEDIUM);
+        if (goal.getType() == null) goal.setType(GoalType.SAVING);
+        goal.setCompleted(false);
+
         goalRepository.save(goal);
-        return toDto(goal);
+        return financialGoalMapper.toDto(goal);
     }
 
     public FinancialGoalDto updateGoal(Long userId, Long id, FinancialGoalDto dto) {
@@ -68,8 +65,9 @@ public class FinancialGoalService {
         goal.setPriority(dto.getPriority());
         goal.setNotes(dto.getNotes());
         goal.setType(dto.getType());
+
         goalRepository.save(goal);
-        return toDto(goal);
+        return financialGoalMapper.toDto(goal);
     }
 
     public void deleteGoal(Long userId, Long id) {
@@ -84,6 +82,7 @@ public class FinancialGoalService {
         goalRepository.delete(goal);
     }
 
+    @Transactional
     public void completeGoal(Long userId, Long id) {
         User user = getUserById(userId);
         FinancialGoal goal = goalRepository.findById(id)
@@ -104,44 +103,30 @@ public class FinancialGoalService {
 
     private Map<String, Long> createGoalStats(User user) {
         return Map.of(
-                "completed", goalRepository.countByUserAndIsCompletedTrue(user),
-                "active", goalRepository.countByUserAndIsCompletedFalseAndDeadlineAfter(user, LocalDate.now()),
-                "overdue", goalRepository.countByUserAndIsCompletedFalseAndDeadlineBefore(user, LocalDate.now())
+                "completed", goalRepository.countByUserAndCompletedTrue(user),
+                "active", goalRepository.countByUserAndCompletedFalseAndDeadlineAfter(user, LocalDate.now()),
+                "overdue", goalRepository.countByUserAndCompletedFalseAndDeadlineBefore(user, LocalDate.now())
         );
-    }
-
-    private FinancialGoalDto toDto(FinancialGoal goal) {
-        return FinancialGoalDto.builder()
-                .id(goal.getId())
-                .name(goal.getName())
-                .targetAmount(goal.getTargetAmount())
-                .currentAmount(goal.getCurrentAmount())
-                .deadline(goal.getDeadline())
-                .isCompleted(goal.isCompleted())
-                .priority(goal.getPriority())
-                .notes(goal.getNotes())
-                .type(goal.getType())
-                .build();
     }
 
     public List<FinancialGoalDto> getUserGoalsByPriority(Long userId, Priority priority) {
         User user = getUserById(userId);
         return goalRepository.findByUserAndPriority(user, priority).stream()
-                .map(this::toDto)
+                .map(financialGoalMapper::toDto)
                 .toList();
     }
 
     public List<FinancialGoalDto> getUserGoals(Long userId, LocalDate startDate, LocalDate endDate) {
         User user = getUserById(userId);
         return goalRepository.findByUserAndDeadlineBetween(user, startDate, endDate).stream()
-                .map(this::toDto)
+                .map(financialGoalMapper::toDto)
                 .collect(Collectors.toList());
     }
 
     public FinancialGoalDto getGoalById(Long userId, Long goalId) {
         FinancialGoal goal = goalRepository.findByIdAndUserId(goalId, userId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Goal not found"));
-        return toDto(goal);
+        return financialGoalMapper.toDto(goal);
     }
 
     private User getUserById(Long userId) {

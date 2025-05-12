@@ -1,457 +1,524 @@
 document.addEventListener("DOMContentLoaded", function () {
-  // Конфигурация API
-  const API_BASE_URL = "http://localhost:8080/api/goals";
-  let authToken = localStorage.getItem("token");
+  // Конфигурация
+  const apiBaseUrl = "http://localhost:8080";
+  const token = localStorage.getItem("token"); // Получаем токен из localStorage
 
-  // Элементы DOM
+  // Проверка авторизации
+  if (!token) {
+    window.location.href = "/frontend/sign-in.html"; // Перенаправляем на страницу входа, если токена нет
+    return;
+  }
+
+  // Настройка заголовков для запросов
+  const headers = {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
+  };
+
+  // DOM Elements
   const goalsList = document.getElementById("goals-list");
   const addGoalBtn = document.getElementById("add-goal");
   const goalModal = document.getElementById("goal-modal");
+  const closeModalBtn = document.querySelector(".close-modal");
   const goalForm = document.getElementById("goal-form");
   const modalTitle = document.getElementById("modal-title");
-  const closeModalBtns = document.querySelectorAll(".close-modal");
-
-  // Статистика
   const completedGoalsEl = document.getElementById("completed-goals");
   const activeGoalsEl = document.getElementById("active-goals");
   const overdueGoalsEl = document.getElementById("overdue-goals");
 
-  let allGoals = [];
-  let currentEditingGoalId = null;
+  let currentGoalId = null;
+  let isEditMode = false;
 
-  // Инициализация
-  checkAuth();
-  loadGoals();
-  setupEventListeners();
+  // Event Listeners
+  addGoalBtn.addEventListener("click", openAddGoalModal);
+  closeModalBtn.addEventListener("click", closeModal);
+  document.querySelectorAll(".close-modal").forEach((btn) => {
+    btn.addEventListener("click", closeModal);
+  });
 
-  function checkAuth() {
-    if (!authToken) {
-      window.location.href = "/frontend/sign-in.html";
-    }
+  goalForm.addEventListener("submit", handleGoalSubmit);
+
+  // Initialize the page
+  fetchGoals();
+  fetchStats();
+
+  // Functions
+  function openAddGoalModal() {
+    isEditMode = false;
+    currentGoalId = null;
+    modalTitle.textContent = "Добавить цель";
+    goalForm.reset();
+    document.getElementById("goal-current").value = "0";
+    openModal();
   }
 
-  function setupEventListeners() {
-    addGoalBtn.addEventListener("click", () => {
-      currentEditingGoalId = null;
-      modalTitle.textContent = "Добавить цель";
-      goalForm.reset();
-      goalModal.classList.add("active");
-    });
+  function openEditGoalModal(goal) {
+    isEditMode = true;
+    currentGoalId = goal.id;
+    modalTitle.textContent = "Редактировать цель";
 
-    closeModalBtns.forEach((btn) => {
-      btn.addEventListener("click", () => {
-        goalModal.classList.remove("active");
-      });
-    });
+    // Fill the form with goal data
+    document.getElementById("goal-title").value = goal.name;
+    document.getElementById("goal-type").value = goal.type;
+    document.getElementById("goal-target").value = goal.targetAmount;
+    document.getElementById("goal-current").value = goal.currentAmount;
+    document.getElementById("goal-deadline").value = goal.deadline;
+    document.getElementById("goal-priority").value = goal.priority;
+    document.getElementById("goal-notes").value = goal.notes || "";
 
-    goalForm.addEventListener("submit", handleGoalFormSubmit);
+    openModal();
+  }
 
-    window.addEventListener("click", (e) => {
-      if (e.target === goalModal) {
-        goalModal.classList.remove("active");
+  function openModal() {
+    goalModal.style.display = "flex";
+    document.body.style.overflow = "hidden";
+  }
+
+  function closeModal() {
+    goalModal.style.display = "none";
+    document.body.style.overflow = "auto";
+  }
+
+  async function handleGoalSubmit(e) {
+    e.preventDefault();
+
+    const formData = {
+      name: document.getElementById("goal-title").value,
+      type: document.getElementById("goal-type").value,
+      targetAmount: parseFloat(document.getElementById("goal-target").value),
+      currentAmount:
+        parseFloat(document.getElementById("goal-current").value) || 0,
+      deadline: document.getElementById("goal-deadline").value,
+      priority: document.getElementById("goal-priority").value,
+      notes: document.getElementById("goal-notes").value,
+    };
+
+    try {
+      if (isEditMode) {
+        await updateGoal(currentGoalId, formData);
+      } else {
+        await createGoal(formData);
       }
-    });
-  }
 
-  async function loadGoals() {
-    try {
-      const response = await fetchWithAuth(API_BASE_URL);
-      allGoals = await response.json();
-
-      // Нормализация данных
-      allGoals = allGoals.map((goal) => ({
-        ...goal,
-        isCompleted: goal.isCompleted || false,
-        deadline: goal.deadline || new Date().toISOString(),
-        currentAmount: goal.currentAmount || 0,
-      }));
-
-      renderGoals(allGoals);
-      loadStats();
+      closeModal();
+      fetchGoals();
+      fetchStats();
     } catch (error) {
-      showNotification("Ошибка загрузки целей", "error");
-      console.error("Error loading goals:", error);
+      console.error("Error saving goal:", error);
+      alert("Произошла ошибка при сохранении цели");
     }
   }
 
-  async function loadStats() {
+  async function fetchGoals() {
     try {
-      const response = await fetchWithAuth(`${API_BASE_URL}/stats`);
-      const stats = await response.json();
+      const response = await fetch(`${apiBaseUrl}/api/goals`, {
+        headers: headers,
+      });
 
-      completedGoalsEl.textContent = stats.completed || 0;
-      activeGoalsEl.textContent = stats.active || 0;
-      overdueGoalsEl.textContent = stats.overdue || 0;
+      if (response.status === 401) {
+        // Если токен недействителен, перенаправляем на страницу входа
+        window.location.href = "/frontend/sign-in.html";
+        return;
+      }
+
+      if (!response.ok) throw new Error("Network response was not ok");
+
+      const goals = await response.json();
+      renderGoals(goals);
     } catch (error) {
-      console.error("Error loading stats:", error);
+      console.error("Error fetching goals:", error);
+      goalsList.innerHTML =
+        '<p class="error">Не удалось загрузить цели. Пожалуйста, попробуйте позже.</p>';
     }
   }
 
-  function renderGoals(goals = allGoals) {
-    goalsList.innerHTML = "";
-
-    const now = new Date();
-
-    // Группируем цели по статусам
-    const completedGoals = goals.filter((goal) => goal.isCompleted === true);
-    const overdueGoals = goals.filter((goal) => {
-      const deadline = new Date(goal.deadline);
-      return !goal.isCompleted && deadline < now;
-    });
-    const activeGoals = goals.filter((goal) => {
-      const deadline = new Date(goal.deadline);
-      return !goal.isCompleted && deadline >= now;
-    });
-
-    // Рендерим секции в правильном порядке
-    renderGoalsSection(
-      overdueGoals,
-      "Просроченные цели",
-      "bx-error-circle",
-      "overdue"
-    );
-    renderGoalsSection(activeGoals, "Активные цели", "bx-time", "active");
-    renderGoalsSection(
-      completedGoals,
-      "Завершенные цели",
-      "bx-check-circle",
-      "completed"
-    );
-
+  function renderGoals(goals) {
     if (goals.length === 0) {
-      goalsList.innerHTML = `
-      <div class="empty-state">
-        <i class="bx bx-target-lock"></i>
-        <p>У вас пока нет финансовых целей</p>
-      </div>
-    `;
+      goalsList.innerHTML =
+        '<p class="no-goals">У вас пока нет финансовых целей. Нажмите "Добавить цель", чтобы создать первую.</p>';
+      return;
     }
-  }
 
-  function renderGoalsSection(goals, title, icon, statusClass) {
-    if (goals.length === 0) return;
+    // Sort goals: completed last, then by deadline
+    goals.sort((a, b) => {
+      if (a.completed && !b.completed) return 1;
+      if (!a.completed && b.completed) return -1;
 
-    const sectionHeader = document.createElement("h3");
-    sectionHeader.className = `goals-section-header ${statusClass}`;
-    sectionHeader.innerHTML = `<i class="bx ${icon}"></i> ${title}`;
-    goalsList.appendChild(sectionHeader);
+      const now = new Date();
+      const aDeadline = new Date(a.deadline);
+      const bDeadline = new Date(b.deadline);
 
-    goals.forEach((goal) => {
-      goalsList.appendChild(createGoalCard(goal));
+      // Overdue goals come first
+      if (aDeadline < now && bDeadline >= now) return -1;
+      if (aDeadline >= now && bDeadline < now) return 1;
+
+      // Then sort by deadline (earlier first)
+      return aDeadline - bDeadline;
+    });
+
+    goalsList.innerHTML = goals.map((goal) => createGoalCard(goal)).join("");
+
+    // Add event listeners to all action buttons
+    document.querySelectorAll(".btn-complete").forEach((btn) => {
+      btn.addEventListener("click", handleCompleteGoal);
+    });
+
+    document.querySelectorAll(".btn-edit").forEach((btn) => {
+      btn.addEventListener("click", handleEditGoal);
+    });
+
+    document.querySelectorAll(".btn-delete").forEach((btn) => {
+      btn.addEventListener("click", handleDeleteGoal);
     });
   }
 
   function createGoalCard(goal) {
     const now = new Date();
     const deadline = new Date(goal.deadline);
-    const isCompleted = goal.isCompleted === true;
-    const isOverdue = !isCompleted && deadline < now;
+    const isOverdue = !goal.completed && deadline < now;
+    const progressPercentage = Math.min(
+      100,
+      (goal.currentAmount / goal.targetAmount) * 100
+    );
 
-    const progress = isCompleted
-      ? 100
-      : goal.currentAmount && goal.targetAmount
-      ? Math.min(100, (goal.currentAmount / goal.targetAmount) * 100)
-      : 0;
-
-    const daysLeft = isCompleted
-      ? null
-      : Math.ceil((deadline - now) / (1000 * 60 * 60 * 24));
-
-    const goalCard = document.createElement("div");
-    goalCard.className = `goal-card ${isCompleted ? "completed" : ""} ${
-      isOverdue ? "overdue" : ""
-    }`;
-
-    goalCard.innerHTML = `
-    <div class="goal-card-header">
-      ${
-        isCompleted
-          ? '<i class="bx bx-check-circle status-icon completed"></i>'
-          : isOverdue
-          ? '<i class="bx bx-error-circle status-icon overdue"></i>'
-          : '<i class="bx bx-time status-icon active"></i>'
-      }
-      <div class="goal-header-content">
-        <h3 class="goal-title">${goal.name}</h3>
-        <span class="goal-type">${getGoalTypeText(goal.type)}</span>
-      </div>
-    </div>
-    
-    <div class="goal-progress">
-      <div class="progress-container">
-        <div class="progress-bar">
-          <div class="progress-fill ${
-            isCompleted ? "completed" : isOverdue ? "overdue" : ""
-          }" 
-               style="width: ${progress}%"></div>
-        </div>
-        <span class="progress-text">${progress.toFixed(1)}%</span>
-      </div>
-      <p class="progress-details">
-        ${formatCurrency(goal.currentAmount)} / ${formatCurrency(
-      goal.targetAmount
-    )}
-        ${isCompleted ? '<span class="completed-badge">Выполнено</span>' : ""}
-      </p>
-    </div>
-    
-    <div class="goal-details">
-      <div class="goal-detail">
-        <i class="bx bx-calendar"></i>
-        <div>
-          <span class="goal-detail-label">Срок выполнения</span>
-          <span class="goal-detail-value">${formatDate(goal.deadline)}</span>
-        </div>
-      </div>
-      
-      ${
-        !isCompleted
-          ? `
-        <div class="goal-detail">
-          <i class="bx bx-time"></i>
-          <div>
-            <span class="goal-detail-label">Осталось дней</span>
-            <span class="goal-detail-value ${isOverdue ? "overdue" : ""}">
-              ${daysLeft >= 0 ? daysLeft : "Просрочено"}
-            </span>
-          </div>
-        </div>
-      `
-          : ""
-      }
-      
-      <div class="goal-actions">
-        ${
-          !isCompleted
-            ? `
-          <button class="goal-btn btn-complete" data-id="${goal.id}">
-            <i class="bx bx-check"></i> Завершить
-          </button>
-          <button class="goal-btn btn-edit" data-id="${goal.id}">
-            <i class="bx bx-edit"></i> Редактировать
-          </button>
-        `
-            : ""
-        }
-        <button class="goal-btn btn-delete" data-id="${goal.id}">
-          <i class="bx bx-trash"></i> Удалить
-        </button>
-      </div>
-    </div>
-  `;
-
-    // Навешиваем обработчики событий
-    if (!isCompleted) {
-      goalCard
-        .querySelector(".btn-complete")
-        .addEventListener("click", () => completeGoal(goal.id));
-      goalCard
-        .querySelector(".btn-edit")
-        .addEventListener("click", () => openEditModal(goal));
+    let cardClass = "goal-card";
+    if (goal.completed) {
+      cardClass += " completed";
+    } else if (isOverdue) {
+      cardClass += " overdue";
+    } else {
+      cardClass += " active";
     }
-    goalCard
-      .querySelector(".btn-delete")
-      .addEventListener("click", () => deleteGoal(goal.id));
 
-    return goalCard;
-  }
-
-  function openEditModal(goal) {
-    currentEditingGoalId = goal.id;
-    modalTitle.textContent = "Редактировать цель";
-
-    // Заполняем форму данными цели
-    document.getElementById("goal-title").value = goal.name;
-    document.getElementById("goal-type").value = goal.type || "SAVING";
-    document.getElementById("goal-target").value = goal.targetAmount;
-    document.getElementById("goal-current").value = goal.currentAmount || 0;
-    document.getElementById("goal-deadline").value =
-      goal.deadline.split("T")[0]; // Форматируем дату для input[type=date]
-    document.getElementById("goal-priority").value = goal.priority || "MEDIUM";
-    document.getElementById("goal-notes").value = goal.notes || "";
-
-    goalModal.classList.add("active");
-  }
-
-  async function handleGoalFormSubmit(e) {
-    e.preventDefault();
-
-    const formData = new FormData(goalForm);
-    const goalData = {
-      name: formData.get("title"),
-      type: formData.get("type"),
-      targetAmount: parseFloat(formData.get("target")),
-      currentAmount: parseFloat(formData.get("current")) || 0,
-      deadline: formData.get("deadline"),
-      priority: formData.get("priority"),
-      notes: formData.get("notes"),
-    };
-
-    try {
-      if (currentEditingGoalId) {
-        await updateGoal(currentEditingGoalId, goalData);
-        showNotification("Цель успешно обновлена", "success");
-      } else {
-        await createGoal(goalData);
-        showNotification("Цель успешно создана", "success");
-      }
-
-      goalModal.classList.remove("active");
-      loadGoals(); // Перезагружаем цели с сервера
-    } catch (error) {
-      console.error("Error saving goal:", error);
-      showNotification(
-        "Ошибка сохранения цели: " + (error.message || "неизвестная ошибка"),
-        "error"
-      );
-    }
+    return `
+            <div class="${cardClass}" data-id="${goal.id}">
+                <div class="goal-card-header">
+                    <h3 class="goal-title">${goal.name}</h3>
+                    <span class="goal-priority priority-${
+                      goal.priority
+                    }">${getPriorityLabel(goal.priority)}</span>
+                </div>
+                
+                <div class="goal-meta">
+                    <span class="goal-type">${getTypeLabel(goal.type)}</span>
+                    <span class="goal-deadline">
+                        <i class="bx bx-calendar"></i>
+                        ${formatDate(goal.deadline)}
+                    </span>
+                </div>
+                
+                <div class="goal-progress-container">
+                    <div class="progress-info">
+                        <span class="progress-amount">${formatCurrency(
+                          goal.currentAmount
+                        )} / ${formatCurrency(goal.targetAmount)}</span>
+                        <span>${progressPercentage.toFixed(0)}%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: ${progressPercentage}%"></div>
+                    </div>
+                </div>
+                
+                ${
+                  goal.notes
+                    ? `<div class="goal-notes">${goal.notes}</div>`
+                    : ""
+                }
+                
+                <div class="goal-actions">
+                    <button class="btn-complete" ${
+                      goal.completed ? "disabled" : ""
+                    }>
+                        <i class="bx bx-check"></i> ${
+                          goal.completed ? "Завершена" : "Завершить"
+                        }
+                    </button>
+                    <div class="action-buttons">
+                        <button class="btn-edit">
+                            <i class="bx bx-edit"></i> Изменить
+                        </button>
+                        <button class="btn-delete">
+                            <i class="bx bx-trash"></i> Удалить
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
   }
 
   async function createGoal(goalData) {
-    const response = await fetchWithAuth(API_BASE_URL, {
+    const response = await fetch(`${apiBaseUrl}/api/goals`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: headers,
       body: JSON.stringify(goalData),
     });
 
-    if (!response.ok) {
-      const error = await response.json().catch(() => ({}));
-      throw new Error(error.message || "Ошибка создания цели");
+    if (response.status === 401) {
+      window.location.href = "/frontend/sign-in.html";
+      return;
     }
+
+    if (!response.ok) throw new Error("Failed to create goal");
 
     return await response.json();
   }
 
   async function updateGoal(id, goalData) {
-    const response = await fetchWithAuth(`${API_BASE_URL}/${id}`, {
+    const response = await fetch(`${apiBaseUrl}/api/goals/${id}`, {
       method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: headers,
       body: JSON.stringify(goalData),
     });
 
-    if (!response.ok) {
-      const error = await response.json().catch(() => ({}));
-      throw new Error(error.message || "Ошибка обновления цели");
+    if (response.status === 401) {
+      window.location.href = "/frontend/sign-in.html";
+      return;
     }
+
+    if (!response.ok) throw new Error("Failed to update goal");
 
     return await response.json();
   }
 
   async function deleteGoal(id) {
-    if (!confirm("Вы уверены, что хотите удалить эту цель?")) return;
-
-    try {
-      const response = await fetchWithAuth(`${API_BASE_URL}/${id}`, {
-        method: "DELETE",
-      });
-
-      if (!response.ok) {
-        throw new Error("Ошибка при удалении цели");
-      }
-
-      showNotification("Цель успешно удалена", "success");
-      loadGoals(); // Перезагружаем цели с сервера
-    } catch (error) {
-      console.error("Error deleting goal:", error);
-      showNotification(error.message || "Ошибка удаления цели", "error");
-    }
-  }
-
-  async function completeGoal(id) {
-    try {
-      // Получаем текущую цель с сервера
-      const response = await fetchWithAuth(`${API_BASE_URL}/${id}/complete`, {
-        method: "PUT",
-      });
-
-      if (!response.ok) {
-        throw new Error("Ошибка завершения цели");
-      }
-
-      showNotification("Цель успешно завершена!", "success");
-      loadGoals(); // Перезагружаем цели с сервера
-    } catch (error) {
-      console.error("Error completing goal:", error);
-      showNotification(error.message || "Ошибка завершения цели", "error");
-    }
-  }
-
-  async function fetchWithAuth(url, options = {}) {
-    const headers = {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${authToken}`,
-      ...options.headers,
-    };
-
-    const config = {
-      ...options,
-      headers,
-    };
-
-    const response = await fetch(url, config);
+    const response = await fetch(`${apiBaseUrl}/api/goals/${id}`, {
+      method: "DELETE",
+      headers: headers,
+    });
 
     if (response.status === 401) {
-      // Неавторизован - перенаправляем на страницу входа
       window.location.href = "/frontend/sign-in.html";
       return;
     }
 
-    if (!response.ok) {
-      const error = await response.json().catch(() => ({}));
-      throw new Error(error.message || "Ошибка запроса");
-    }
-
-    return response;
+    if (!response.ok) throw new Error("Failed to delete goal");
   }
 
-  // Вспомогательные функции
+  async function completeGoal(id) {
+    const response = await fetch(`${apiBaseUrl}/api/goals/${id}/complete`, {
+      method: "PUT",
+      headers: headers,
+    });
+
+    if (response.status === 401) {
+      window.location.href = "/frontend/sign-in.html";
+      return;
+    }
+
+    if (!response.ok) throw new Error("Failed to complete goal");
+
+    return await response.json();
+  }
+
+  async function fetchStats() {
+    try {
+      const response = await fetch(`${apiBaseUrl}/api/goals/stats`, {
+        headers: headers,
+      });
+
+      if (response.status === 401) {
+        window.location.href = "/frontend/sign-in.html";
+        return;
+      }
+
+      if (!response.ok) throw new Error("Network response was not ok");
+
+      const stats = await response.json();
+      updateStatsUI(stats);
+    } catch (error) {
+      console.error("Error fetching stats:", error);
+    }
+  }
+
+  function updateStatsUI(stats) {
+    completedGoalsEl.textContent = stats.completed || 0;
+    activeGoalsEl.textContent = stats.active || 0;
+    overdueGoalsEl.textContent = stats.overdue || 0;
+  }
+
+  async function handleCompleteGoal(e) {
+    const goalCard = e.target.closest(".goal-card");
+    const goalId = goalCard.dataset.id;
+
+    try {
+      // Сначала получаем текущие данные цели
+      const response = await fetch(`${apiBaseUrl}/api/goals/${goalId}`, {
+        headers: headers,
+      });
+
+      if (response.status === 401) {
+        window.location.href = "/frontend/login.html";
+        return;
+      }
+
+      if (!response.ok) throw new Error("Failed to fetch goal data");
+
+      const goal = await response.json();
+
+      // Обновляем текущую сумму до целевой
+      const updatedGoalData = {
+        ...goal,
+        currentAmount: goal.targetAmount,
+        completed: true,
+      };
+
+      // Отправляем обновленные данные
+      const updateResponse = await fetch(`${apiBaseUrl}/api/goals/${goalId}`, {
+        method: "PUT",
+        headers: headers,
+        body: JSON.stringify(updatedGoalData),
+      });
+
+      if (!updateResponse.ok) throw new Error("Failed to complete goal");
+
+      // Обновляем интерфейс
+      goalCard.classList.add("completed");
+      goalCard.classList.remove("active", "overdue");
+
+      const progressFill = goalCard.querySelector(".progress-fill");
+      progressFill.style.width = "100%";
+      progressFill.style.backgroundColor = "var(--success)";
+
+      const progressAmount = goalCard.querySelector(".progress-amount");
+      progressAmount.textContent = `${formatCurrency(
+        goal.targetAmount
+      )} / ${formatCurrency(goal.targetAmount)}`;
+
+      const completeBtn = goalCard.querySelector(".btn-complete");
+      completeBtn.disabled = true;
+      completeBtn.innerHTML = '<i class="bx bx-check"></i> Завершена';
+
+      // Обновляем статистику
+      fetchStats();
+
+      // Показываем уведомление об успехе
+      showSuccessNotification("Цель успешно завершена!");
+    } catch (error) {
+      console.error("Error completing goal:", error);
+      showErrorNotification(
+        "Не удалось завершить цель. Пожалуйста, попробуйте позже."
+      );
+    }
+  }
+
+  function showSuccessNotification(message) {
+    const notification = document.createElement("div");
+    notification.className = "notification success";
+    notification.innerHTML = `
+        <i class="bx bx-check-circle"></i>
+        <span>${message}</span>
+    `;
+    document.body.appendChild(notification);
+
+    setTimeout(() => {
+      notification.classList.add("show");
+    }, 10);
+
+    setTimeout(() => {
+      notification.classList.remove("show");
+      setTimeout(() => notification.remove(), 300);
+    }, 3000);
+  }
+
+  function showErrorNotification(message) {
+    const notification = document.createElement("div");
+    notification.className = "notification error";
+    notification.innerHTML = `
+        <i class="bx bx-error-circle"></i>
+        <span>${message}</span>
+    `;
+    document.body.appendChild(notification);
+
+    setTimeout(() => {
+      notification.classList.add("show");
+    }, 10);
+
+    setTimeout(() => {
+      notification.classList.remove("show");
+      setTimeout(() => notification.remove(), 300);
+    }, 3000);
+  }
+
+  async function handleEditGoal(e) {
+    const goalCard = e.target.closest(".goal-card");
+    const goalId = goalCard.dataset.id;
+
+    try {
+      const response = await fetch(`${apiBaseUrl}/api/goals/${goalId}`, {
+        headers: headers,
+      });
+
+      if (response.status === 401) {
+        window.location.href = "/frontend/sign-in.html";
+        return;
+      }
+
+      if (!response.ok) throw new Error("Network response was not ok");
+
+      const goal = await response.json();
+      openEditGoalModal(goal);
+    } catch (error) {
+      console.error("Error fetching goal for edit:", error);
+      alert("Не удалось загрузить данные цели для редактирования");
+    }
+  }
+
+  async function handleDeleteGoal(e) {
+    if (!confirm("Вы уверены, что хотите удалить эту цель?")) return;
+
+    const goalCard = e.target.closest(".goal-card");
+    const goalId = goalCard.dataset.id;
+
+    try {
+      await deleteGoal(goalId);
+      goalCard.remove();
+      fetchStats();
+    } catch (error) {
+      console.error("Error deleting goal:", error);
+      alert("Не удалось удалить цель. Пожалуйста, попробуйте позже.");
+    }
+  }
+
+  // Helper functions
+  function getPriorityLabel(priority) {
+    const labels = {
+      LOW: "Низкий",
+      MEDIUM: "Средний",
+      HIGH: "Высокий",
+    };
+    return labels[priority] || priority;
+  }
+
+  function getTypeLabel(type) {
+    const labels = {
+      SAVING: "Накопления",
+      DEBT: "Долг",
+      PURCHASE: "Покупка",
+      OTHER: "Другое",
+    };
+    return labels[type] || type;
+  }
+
+  function formatDate(dateString) {
+    const options = { year: "numeric", month: "short", day: "numeric" };
+    return new Date(dateString).toLocaleDateString("ru-RU", options);
+  }
+
   function formatCurrency(amount) {
     return new Intl.NumberFormat("ru-RU", {
       style: "currency",
       currency: "RUB",
       minimumFractionDigits: 0,
-    }).format(amount || 0);
+      maximumFractionDigits: 0,
+    })
+      .format(amount)
+      .replace(/\s/g, " ");
   }
 
-  function formatDate(dateString) {
-    const options = { year: "numeric", month: "long", day: "numeric" };
-    return new Date(dateString).toLocaleDateString("ru-RU", options);
-  }
-
-  function getGoalTypeText(type) {
-    const types = {
-      SAVING: "Накопления",
-      DEBT: "Погашение долга",
-      PURCHASE: "Крупная покупка",
-      OTHER: "Другое",
-    };
-    return types[type] || type;
-  }
-
-  function showNotification(message, type = "info") {
-    const notification = document.createElement("div");
-    notification.className = `notification ${type}`;
-    notification.innerHTML = `
-      <i class="bx ${
-        type === "success"
-          ? "bx-check-circle"
-          : type === "error"
-          ? "bx-error-circle"
-          : "bx-info-circle"
-      }"></i>
-      <span>${message}</span>
-    `;
-
-    document.body.appendChild(notification);
-
-    // Автоматическое скрытие через 5 секунд
-    setTimeout(() => {
-      notification.classList.add("fade-out");
-      setTimeout(() => notification.remove(), 300);
-    }, 5000);
-  }
+  // Close modal when clicking outside
+  window.addEventListener("click", (e) => {
+    if (e.target === goalModal) {
+      closeModal();
+    }
+  });
 });

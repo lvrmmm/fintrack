@@ -48,10 +48,11 @@ public class FinancialGoalController {
     }
 
     @PutMapping("/{id}/complete")
-    public void completeGoal(@AuthenticationPrincipal UserPrincipal userPrincipal,
-                             @PathVariable Long id) {
-        Long userId = userPrincipal.getUser().getId();  // Извлекаем id из UserPrincipal
+    public FinancialGoalDto completeGoal(@AuthenticationPrincipal UserPrincipal userPrincipal,
+                                         @PathVariable Long id) {
+        Long userId = userPrincipal.getUser().getId();
         goalService.completeGoal(userId, id);
+        return goalService.getGoalById(userId, id); // вернём обновлённую цель
     }
 
     @GetMapping("/stats")
