@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FinTrack - Профиль</title>
+    <link
+      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/frontend/css/header.css" />
+    <link rel="stylesheet" href="/frontend/css/sidebar.css" />
+    <link rel="stylesheet" href="/frontend/css/profile.css" />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="/frontend/images/icon_logo.png"
+    />
+  </head>
+  <body>
+    <!-- Боковое меню -->
+    <div class="sidebar">
+      <div class="logo">
+        <img src="/frontend/images/logo.png" alt="FinTrack" />
+        <p>FinTrack</p>
+      </div>
+      <ul class="main">
+        <li>
+          <a href="/frontend/dashboard.html">
+            <i class="bx bxs-dashboard"></i>
+            <span>Дашборд</span>
+          </a>
+        </li>
+        <li>
+          <a href="/frontend/transactions.html">
+            <i class="bx bx-transfer-alt"></i>
+            <span>Транзакции</span>
+          </a>
+        </li>
+        <li>
+          <a href="/frontend/budget.html">
+            <i class="bx bx-briefcase"></i>
+            <span>Бюджет</span>
+          </a>
+        </li>
+        <li>
+          <a href="/frontend/statistics.html">
+            <i class="bx bx-stats"></i>
+            <span>Статистика</span>
+          </a>
+        </li>
+        <li>
+          <a href="/frontend/calendar.html">
+            <i class="bx bx-calendar"></i>
+            <span>Календарь</span>
+          </a>
+        </li>
+        <li>
+          <a href="/frontend/goals.html">
+            <i class="bx bxs-star-half"></i>
+            <span>Цели</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Верхнее меню -->
+    <div class="header">
+      <div class="greeting">
+        <h1 id="greeting-text">Профиль пользователя</h1>
+      </div>
+      <div class="header-right">
+        <div class="notifications">
+          <i class="bx bx-bell"></i>
+          <span class="notification-badge">3</span>
+        </div>
+        <div class="profile">
+          <img src="/frontend/images/avatar.jpg" alt="Профиль" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Основное содержимое -->
+    <div class="profile-content">
+      <div class="profile-container">
+        <!-- Левая колонка - аватар и основные действия -->
+        <div class="profile-sidebar">
+          <div class="avatar-upload">
+            <div class="profile-sidebar">
+              <div class="avatar-preview">
+                <img src="/frontend/images/avatar.jpg" alt="Аватар" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+          <div class="profile-actions">
+            <button id="save-btn" class="btn-primary">
+              <i class="bx bx-save"></i> Сохранить изменения
+            </button>
+            <button id="change-password-btn" class="btn-secondary">
+              <i class="bx bx-lock-alt"></i> Сменить пароль
+            </button>
+            <button id="change-email-btn" class="btn-secondary">
+              <i class="bx bx-envelope"></i> Сменить почту
+            </button>
+            <button id="logout-btn" class="btn-danger">
+              <i class="bx bx-log-out"></i> Выйти из профиля
+            </button>
+          </div>
+        </div>
+
+        <!-- Правая колонка - информация о пользователе -->
+        <div class="profile-info">
+          <h2>Личная информация</h2>
+
+          <div class="form-group">
+            <label for="first-name">Имя</label>
+            <input type="text" id="first-name" placeholder="Введите имя" />
+          </div>
+
+          <div class="form-group">
+            <label for="last-name">Фамилия</label>
+            <input type="text" id="last-name" placeholder="Введите фамилию" />
+          </div>
+
+          <div class="form-group">
+            <label for="birthdate">Дата рождения</label>
+            <input type="date" id="birthdate" />
+          </div>
+
+          <div class="form-group">
+            <label for="gender">Пол</label>
+            <select id="gender">
+              <option value="">Выберите пол</option>
+              <option value="MALE">Мужской</option>
+              <option value="FEMALE">Женский</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="bio">О себе</label>
+            <textarea
+              id="bio"
+              rows="4"
+              placeholder="Напишите немного о себе..."
+            ></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Модальное окно смены пароля -->
+    <div id="password-modal" class="modal">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Смена пароля</h2>
+        <div class="form-group">
+          <label for="current-password">Текущий пароль</label>
+          <input type="password" id="current-password" />
+        </div>
+        <div class="form-group">
+          <label for="new-password">Новый пароль</label>
+          <input type="password" id="new-password" />
+        </div>
+        <div class="form-group">
+          <label for="confirm-password">Подтвердите пароль</label>
+          <input type="password" id="confirm-password" />
+        </div>
+        <button id="confirm-password-btn" class="btn-primary">
+          Изменить пароль
+        </button>
+      </div>
+    </div>
+
+    <!-- Модальное окно смены почты -->
+    <div id="email-modal" class="modal">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Смена email</h2>
+        <div class="form-group">
+          <label for="current-email">Текущий email</label>
+          <input
+            type="email"
+            id="current-email"
+            value="lvrmmm@mail.ru"
+            readonly
+          />
+        </div>
+        <div class="form-group">
+          <label for="new-email">Новый email</label>
+          <input type="email" id="new-email" />
+        </div>
+        <div class="form-group">
+          <label for="email-password">Пароль для подтверждения</label>
+          <input type="password" id="email-password" />
+        </div>
+        <button id="confirm-email-btn" class="btn-primary">
+          Изменить email
+        </button>
+      </div>
+    </div>
+    <script src="/frontend/script/profile.js"></script>
+  </body>
+</html>
