@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Вход в аккаунт | FinTrack</title>
+    <link rel="stylesheet" href="/frontend/css/sign-in.css" />
+    <link
+      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="/images/icon_logo.png"
+    />
+  </head>
+  <body class="auth-page">
+    <main class="auth-container">
+      <form class="auth-form" id="loginForm">
+        <a href="/frontend/lending.html" class="auth-form__logo-link">
+          <img
+            class="auth-form__logo"
+            src="/frontend/images/logo.png"
+            alt="Логотип FinTrack"
+          />
+        </a>
+        <h1 class="auth-form__title">Вход в аккаунт</h1>
+
+        <div class="auth-form__input-group">
+          <div class="auth-form__input-box">
+            <i class="auth-form__icon bx bx-user-pin"></i>
+            <input
+              type="text"
+              class="auth-form__input"
+              placeholder="Введите логин"
+              name="username"
+              required
+            />
+          </div>
+
+          <div class="auth-form__input-box">
+            <i class="auth-form__icon bx bx-lock-alt"></i>
+            <input
+              type="password"
+              class="auth-form__input"
+              placeholder="Введите пароль"
+              name="password"
+              id="passwordInput"
+              required
+            />
+            <i class="bx bx-show password-toggle-icon" id="togglePassword"></i>
+          </div>
+        </div>
+
+        <div class="auth-form__options">
+          <label class="auth-form__remember">
+            <input type="checkbox" class="auth-form__checkbox" />
+            <span class="auth-form__remember-text">Запомнить пароль</span>
+          </label>
+          <a href="#" class="auth-form__forgot-password">Забыли пароль?</a>
+        </div>
+
+        <button type="submit" class="auth-form__submit-btn">Войти</button>
+
+        <div class="auth-form__footer">
+          <p class="auth-form__footer-text">
+            Ещё не зарегистрированы?
+            <a href="/frontend/sign-up.html" class="auth-form__footer-link">
+              Создать аккаунт
+            </a>
+          </p>
+        </div>
+      </form>
+    </main>
+    <script src="/frontend/script/sign-in.js"></script>
+  </body>
+</html>
