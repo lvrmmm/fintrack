@@ -1,4 +1,4 @@
-package com.fintrack.backend.dto;
+package com.fintrack.backend.dto.response;
 
 import lombok.Builder;
 import lombok.Data;

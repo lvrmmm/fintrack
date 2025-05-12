@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FinTrack - Цели</title>
+    <link
+      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/frontend/css/sidebar.css" />
+    <link rel="stylesheet" href="/frontend/css/header.css" />
+    <link rel="stylesheet" href="/frontend/css/goals.css" />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="/frontend/images/icon_logo.png"
+    />
+  </head>
+  <body>
+    <!-- Боковое меню -->
+    <div class="sidebar">
+      <div class="logo">
+        <img src="/frontend/images/logo.png" alt="FinTrack" />
+        <p>FinTrack</p>
+      </div>
+      <ul class="main">
+        <li>
+          <a href="/frontend/dashboard.html"
+            ><i class="bx bxs-dashboard"></i><span>Дашборд</span></a
+          >
+        </li>
+        <li>
+          <a href="/frontend/transactions.html"
+            ><i class="bx bx-transfer-alt"></i><span>Транзакции</span></a
+          >
+        </li>
+        <li>
+          <a href="/frontend/budget.html"
+            ><i class="bx bx-briefcase"></i><span>Бюджет</span></a
+          >
+        </li>
+        <li>
+          <a href="/frontend/statistics.html"
+            ><i class="bx bx-stats"></i><span>Статистика</span></a
+          >
+        </li>
+        <li>
+          <a href="/frontend/calendar.html"
+            ><i class="bx bx-calendar"></i><span>Календарь</span></a
+          >
+        </li>
+        <li class="active">
+          <a href="/frontend/goals.html"
+            ><i class="bx bxs-star-half"></i><span>Цели</span></a
+          >
+        </li>
+      </ul>
+    </div>
+
+    <!-- Верхнее меню -->
+    <div class="header">
+      <div class="greeting">
+        <h1 id="greeting-text">Загрузка...</h1>
+      </div>
+      <div class="header-right">
+        <div class="notifications">
+          <i class="bx bx-bell"></i>
+          <span class="notification-badge">3</span>
+        </div>
+        <div class="profile">
+          <a href="/frontend/profile.html">
+            <img src="/frontend/images/avatar.jpg" alt="Профиль" />
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Основное содержимое -->
+    <main class="main-content goals-page">
+      <div class="goals-container">
+        <div class="goals-header">
+          <h2>Мои финансовые цели</h2>
+          <button id="add-goal" class="btn-primary">
+            <i class="bx bx-plus"></i> Добавить цель
+          </button>
+        </div>
+
+        <div class="goals-list" id="goals-list">
+          <!-- Динамически заполняется через JS -->
+        </div>
+
+        <div class="goals-stats">
+          <div class="stats-card">
+            <div class="stat-icon success">
+              <i class="bx bx-check-circle"></i>
+            </div>
+            <div class="stat-info">
+              <span class="stat-value" id="completed-goals">0</span>
+              <span class="stat-label">Завершено</span>
+            </div>
+          </div>
+          <div class="stats-card">
+            <div class="stat-icon primary">
+              <i class="bx bx-time"></i>
+            </div>
+            <div class="stat-info">
+              <span class="stat-value" id="active-goals">0</span>
+              <span class="stat-label">Активные</span>
+            </div>
+          </div>
+          <div class="stats-card">
+            <div class="stat-icon danger">
+              <i class="bx bx-error-circle"></i>
+            </div>
+            <div class="stat-info">
+              <span class="stat-value" id="overdue-goals">0</span>
+              <span class="stat-label">Просрочено</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Модальное окно -->
+      <div class="modal" id="goal-modal">
+        <div class="modal-content">
+          <span class="close-modal">&times;</span>
+          <div class="modal-header">
+            <h3 id="modal-title">Добавить цель</h3>
+          </div>
+
+          <form id="goal-form">
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="goal-title">Название цели</label>
+                <div class="input-with-icon">
+                  <i class="bx bx-edit-alt"></i>
+                  <input
+                    type="text"
+                    id="goal-title"
+                    name="title"
+                    class="form-control"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="goal-type">Тип цели</label>
+                <div class="input-with-icon">
+                  <i class="bx bx-category"></i>
+                  <select
+                    id="goal-type"
+                    name="type"
+                    class="form-control"
+                    required
+                  >
+                    <option value="SAVING">Накопления</option>
+                    <option value="DEBT">Погашение долга</option>
+                    <option value="PURCHASE">Крупная покупка</option>
+                    <option value="OTHER">Другое</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="goal-target">Целевая сумма</label>
+                <div class="input-with-icon">
+                  <i class="bx bx-ruble"></i>
+                  <input
+                    type="number"
+                    id="goal-target"
+                    name="target"
+                    class="form-control"
+                    min="1"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="goal-current">Текущая сумма</label>
+                <div class="input-with-icon">
+                  <i class="bx bx-wallet"></i>
+                  <input
+                    type="number"
+                    id="goal-current"
+                    name="current"
+                    class="form-control"
+                    min="0"
+                  />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="goal-deadline">Срок выполнения</label>
+                <div class="input-with-icon">
+                  <i class="bx bx-calendar"></i>
+                  <input
+                    type="date"
+                    id="goal-deadline"
+                    name="deadline"
+                    class="form-control"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="goal-priority">Приоритет</label>
+                <div class="input-with-icon">
+                  <i class="bx bx-star"></i>
+                  <select
+                    id="goal-priority"
+                    name="priority"
+                    class="form-control"
+                  >
+                    <option value="LOW">Низкий</option>
+                    <option value="MEDIUM" selected>Средний</option>
+                    <option value="HIGH">Высокий</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-group full-width">
+                <label for="goal-notes">Заметки</label>
+                <textarea
+                  id="goal-notes"
+                  name="notes"
+                  class="form-control"
+                  rows="3"
+                ></textarea>
+              </div>
+            </div>
+
+            <div class="modal-actions">
+              <button type="button" class="btn-secondary close-modal">
+                Отмена
+              </button>
+              <button type="submit" class="btn-primary">Сохранить</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </main>
+    <script src="/frontend/script/greeting.js"></script>
+    <script src="/frontend/script/goals.js"></script>
+  </body>
+</html>

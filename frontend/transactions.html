@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FinTrack - Транзакции</title>
+    <link
+      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
+    />
+    <link rel="stylesheet" href="/frontend/css/sidebar.css" />
+    <link rel="stylesheet" href="/frontend/css/header.css" />
+    <link rel="stylesheet" href="/frontend/css/transactions.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="/frontend/images/icon_logo.png"
+    />
+  </head>
+  <body>
+    <!-- Боковое меню -->
+    <div class="sidebar">
+      <div class="logo">
+        <img src="/frontend/images/logo.png" alt="FinTrack" />
+        <p>FinTrack</p>
+      </div>
+      <ul class="main">
+        <li>
+          <a href="/frontend/dashboard.html">
+            <i class="bx bxs-dashboard"></i>
+            <span>Дашборд</span>
+          </a>
+        </li>
+        <li class="active">
+          <a href="/frontend/transactions.html">
+            <i class="bx bx-transfer-alt"></i>
+            <span>Транзакции</span>
+          </a>
+        </li>
+        <li>
+          <a href="/frontend/budget.html">
+            <i class="bx bx-briefcase"></i>
+            <span>Бюджет</span>
+          </a>
+        </li>
+        <li>
+          <a href="/frontend/statistics.html">
+            <i class="bx bx-stats"></i>
+            <span>Статистика</span>
+          </a>
+        </li>
+        <li>
+          <a href="/frontend/calendar.html">
+            <i class="bx bx-calendar"></i>
+            <span>Календарь</span>
+          </a>
+        </li>
+        <li>
+          <a href="/frontend/goals.html">
+            <i class="bx bxs-star-half"></i>
+            <span>Цели</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Верхнее меню -->
+    <div class="header">
+      <div class="greeting">
+        <h1 id="greeting-text">Загрузка...</h1>
+      </div>
+      <div class="header-right">
+        <div class="notifications">
+          <i class="bx bx-bell"></i>
+          <span class="notification-badge">3</span>
+          <div class="notifications-dropdown">
+            <div class="notification-item">
+              <i class="bx bx-wallet"></i>
+              <p>Бюджет на продукты почти исчерпан</p>
+            </div>
+            <div class="notification-item">
+              <i class="bx bx-check-circle"></i>
+              <p>Цель "Новый телефон" выполнена на 75%</p>
+            </div>
+          </div>
+        </div>
+        <div class="profile">
+          <a href="/frontend/profile.html">
+            <img src="/frontend/images/avatar.jpg" alt="Профиль" />
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Основное содержимое -->
+    <main class="main-content transactions-page">
+      <!-- Фильтры -->
+      <section class="filters">
+        <h2>Фильтры</h2>
+        <div class="filters-grid">
+          <label>
+            Тип транзакции:
+            <select id="type-filter">
+              <option value="all">Все</option>
+              <option value="income">Доходы</option>
+              <option value="expense">Расходы</option>
+            </select>
+          </label>
+          <label>
+            Категория:
+            <select id="category-filter">
+              <option value="all">Все</option>
+              <option value="SALARY">Зарплата</option>
+              <option value="GROCERIES">Продукты</option>
+              <option value="TRANSPORT">Транспорт</option>
+              <option value="UTILITIES">Жильё</option>
+              <option value="ENTERTAINMENT">Развлечения</option>
+              <option value="HEALTH">Здоровье</option>
+              <option value="EDUCATION">Образование</option>
+              <option value="CLOTHING">Одежда</option>
+              <option value="TRAVEL">Путешествия</option>
+              <option value="INVESTMENTS">Инвестиции</option>
+              <option value="OTHER">Другое</option>
+            </select>
+          </label>
+          <label>
+            Счёт:
+            <select id="account-filter">
+              <option value="all">Все</option>
+              <option value="CASH">Наличные</option>
+              <option value="CARD">Карта</option>
+              <option value="BANK">Банк</option>
+              <option value="OTHER">Другое</option>
+            </select>
+          </label>
+          <label>
+            Сумма: <input type="number" id="amount-min" placeholder="Мин" /> -
+            <input type="number" id="amount-max" placeholder="Макс" />
+          </label>
+          <label>
+            Период: <input type="date" id="date-start" /> -
+            <input type="date" id="date-end" />
+          </label>
+        </div>
+        <div class="filters-actions">
+          <button id="apply-filters" class="btn-primary">Применить</button>
+          <button id="reset-filters" class="btn-secondary">Сбросить</button>
+        </div>
+      </section>
+
+      <!-- График недельных трат -->
+      <section class="chart-section">
+        <div class="chart-header">
+          <h3>Недельная статистика</h3>
+          <div class="currency-toggle">
+            <button id="currency-toggle" class="btn-icon">₽</button>
+          </div>
+        </div>
+        <div class="chart-container">
+          <canvas id="weeklyProgressChart"></canvas>
+        </div>
+      </section>
+      <!-- Таблица транзакций -->
+      <section class="transactions-list-container">
+        <div class="transactions-actions">
+          <button id="add-transaction" class="btn-primary">
+            <i class="bx bx-plus"></i> Добавить транзакцию
+          </button>
+        </div>
+        <div class="table-responsive">
+          <table class="transactions-table">
+            <thead>
+              <tr>
+                <th>Дата</th>
+                <th>Категория</th>
+                <th>Счёт</th>
+                <th>Сумма</th>
+                <th>Тип</th>
+                <th>Действия</th>
+              </tr>
+            </thead>
+            <tbody id="transactions-body">
+              <!-- динамически добавляется -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Подсказки / аналитика -->
+      <section class="transaction-tips">
+        <p class="highlight-tip">
+          <i class="bx bx-info-circle"></i> Транзакции, превышающие средний
+          расход, подсвечены красным.
+        </p>
+      </section>
+    </main>
+
+    <!-- Модальное окно -->
+    <div class="modal" id="transaction-modal">
+      <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <h3 id="modal-title">Добавить транзакцию</h3>
+        <form id="transaction-form">
+          <div class="form-group">
+            <label for="transaction-date">Дата</label>
+            <input type="date" id="transaction-date" name="date" required />
+          </div>
+          <div class="form-group">
+            <label for="transaction-category">Категория</label>
+            <select id="transaction-category" name="category" required>
+              <option value="SALARY">Зарплата</option>
+              <option value="GROCERIES">Продукты</option>
+              <option value="TRANSPORT">Транспорт</option>
+              <option value="UTILITIES">Жильё</option>
+              <option value="ENTERTAINMENT">Развлечения</option>
+              <option value="HEALTH">Здоровье</option>
+              <option value="EDUCATION">Образование</option>
+              <option value="CLOTHING">Одежда</option>
+              <option value="TRAVEL">Путешествия</option>
+              <option value="INVESTMENTS">Инвестиции</option>
+              <option value="OTHER">Другое</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="transaction-payment-method">Счёт</label>
+            <select
+              id="transaction-payment-method"
+              name="paymentMethod"
+              required
+            >
+              <option value="CASH">Наличные</option>
+              <option value="CARD">Карта</option>
+              <option value="BANK">Банк</option>
+              <option value="OTHER">Другое</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="transaction-amount">Сумма</label>
+            <input
+              type="number"
+              id="transaction-amount"
+              name="amount"
+              step="0.01"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="transaction-type">Тип</label>
+            <select id="transaction-type" name="type">
+              <option value="INCOME">Доход</option>
+              <option value="EXPENSE">Расход</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="transaction-description"
+              >Описание (необязательно)</label
+            >
+            <textarea
+              id="transaction-description"
+              name="description"
+              rows="2"
+            ></textarea>
+          </div>
+          <div class="modal-actions">
+            <button type="submit" class="btn-primary">Сохранить</button>
+            <button type="button" class="btn-secondary close-modal">
+              Отмена
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <script src="/frontend/script/greeting.js"></script>
+    <script src="/frontend/script/transactions.js"></script>
+  </body>
+</html>
