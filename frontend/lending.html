@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FinTrack - Управление финансами стало проще</title>
+    <link rel="stylesheet" href="/frontend/css/lending.css" />
+    <link
+      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="/frontend/images/icon_logo.png"
+    />
+  </head>
+  <body class="page">
+    <!-- Шапка -->
+    <div class="header">
+      <div class="wrapper">
+        <div class="nav">
+          <a href="#about" class="logo-link">
+            <img
+              src="/frontend/images/logo.png"
+              alt="FinTrack Logo"
+              class="nav-logo"
+            />
+            <span class="logo-text">FinTrack</span>
+          </a>
+
+          <ul class="nav-list" id="navList">
+            <li class="nav-list__item">
+              <a href="#about" class="nav-link">О нас</a>
+            </li>
+            <li class="nav-list__item">
+              <a href="#features" class="nav-link">Возможности</a>
+            </li>
+            <li class="nav-list__item">
+              <a href="#how-it-works" class="nav-link">Как это работает?</a>
+            </li>
+            <li class="nav-list__item">
+              <a href="#demo" class="nav-link">Демо</a>
+            </li>
+            <li class="nav-list__item">
+              <a href="/frontend/sign-in.html" class="btn btn-primary">Войти</a>
+            </li>
+          </ul>
+
+          <div class="burger-menu" id="burgerMenu">
+            <i class="burger-menu__icon bx bx-menu"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Главный блок -->
+    <div class="main-block padding-block" id="about">
+      <div class="wrapper">
+        <div class="main-content">
+          <div class="main-text">
+            <h1 class="main-title">Управление финансами стало проще</h1>
+            <p class="main-description">
+              FinTrack помогает контролировать расходы, анализировать доходы и
+              отслеживать инвестиции через удобный и понятный интерфейс.
+            </p>
+            <div class="main-buttons">
+              <a href="/frontend/sign-up.html" class="btn btn-primary"
+                >Получить контроль над финансами</a
+              >
+              <a href="#demo" class="btn btn-outline">Узнать больше</a>
+            </div>
+          </div>
+          <div class="main-image">
+            <img
+              class="main-image__img"
+              src="/frontend/images/1.jpg"
+              alt="FinTrack Dashboard"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Статистика -->
+    <div class="stats-block">
+      <div class="wrapper">
+        <div class="stats-container">
+          <div class="stat-item">
+            <div class="stat-item__number">Простота</div>
+            <div class="stat-item__text">
+              Нет запутанных функций и непонятных слов
+            </div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-item__number">Удобство</div>
+            <div class="stat-item__text">
+              Понятный интерфейс и современный дизайн
+            </div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-item__number">24/7</div>
+            <div class="stat-item__text">Поддержка</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Особенности -->
+    <div class="features-block padding-block" id="features">
+      <div class="wrapper">
+        <div class="block-title">
+          <h2 class="block-title__heading">
+            Мощные возможности для ваших финансов
+          </h2>
+          <p class="block-title__description">
+            Все необходимое для полного контроля над вашими деньгами в одном
+            месте
+          </p>
+        </div>
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-card__icon">
+              <i class="bx bx-line-chart"></i>
+            </div>
+            <h3 class="feature-card__title">Автоматический учет</h3>
+            <p class="feature-card__description">
+              Все ваши доходы и расходы автоматически сортируются по категориям
+              и анализируются.
+            </p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-card__icon">
+              <i class="bx bx-trending-up"></i>
+            </div>
+            <h3 class="feature-card__title">Инвестиции</h3>
+            <p class="feature-card__description">
+              Отслеживайте акции, криптовалюты и другие активы в одном месте.
+            </p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-card__icon"><i class="bx bx-bell"></i></div>
+            <h3 class="feature-card__title">Умные уведомления</h3>
+            <p class="feature-card__description">
+              Получайте предупреждения о приближении к лимиту бюджета.
+            </p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-card__icon"><i class="bx bx-refresh"></i></div>
+            <h3 class="feature-card__title">Синхронизация</h3>
+            <p class="feature-card__description">
+              Подключение банковских счетов для автоматического учета операций.
+            </p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-card__icon">
+              <i class="bx bx-target-lock"></i>
+            </div>
+            <h3 class="feature-card__title">Финансовые цели</h3>
+            <p class="feature-card__description">
+              Ставьте цели и отслеживайте прогресс их достижения.
+            </p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-card__icon"><i class="bx bx-money"></i></div>
+            <h3 class="feature-card__title">Мультивалютность</h3>
+            <p class="feature-card__description">
+              Учет операций в разных валютах с автоматическим пересчетом по
+              курсу.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Как это работает -->
+    <div class="steps-block padding-block" id="how-it-works">
+      <div class="wrapper">
+        <div class="block-title">
+          <h2 class="block-title__heading">Как это работает?</h2>
+          <p class="block-title__description">
+            Три простых шага к финансовому контролю
+          </p>
+        </div>
+
+        <div class="steps-container">
+          <!-- Шаг 1 -->
+          <div class="step">
+            <div class="step__number">1</div>
+            <div class="step__content">
+              <h3 class="step__title">Добавьте операции</h3>
+              <p class="step__description">
+                Вносите доходы и расходы вручную или импортируйте из банка.
+                Система автоматически распределит их по категориям.
+              </p>
+            </div>
+          </div>
+
+          <!-- Шаг 2 -->
+          <div class="step">
+            <div class="step__number">2</div>
+            <div class="step__content">
+              <h3 class="step__title">Анализируйте</h3>
+              <p class="step__description">
+                Изучайте наглядные отчеты и графики. Определяйте, на что уходят
+                ваши деньги.
+              </p>
+            </div>
+          </div>
+
+          <!-- Шаг 3 -->
+          <div class="step">
+            <div class="step__number">3</div>
+            <div class="step__content">
+              <h3 class="step__title">Оптимизируйте</h3>
+              <p class="step__description">
+                Ставьте финансовые цели, получайте рекомендации и улучшайте свое
+                финансовое здоровье.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Демо -->
+    <div class="demo-block padding-block" id="demo">
+      <div class="wrapper">
+        <div class="demo-container">
+          <div class="demo-text">
+            <h2 class="demo-text__title">Посмотрите, как это работает</h2>
+            <p class="demo-text__paragraph">
+              <span class="demo-text__highlight"> FinTrack </span>
+              предлагает удобный и интуитивно понятный интерфейс, который делает
+              управление личными финансами простым и приятным.
+            </p>
+            <p class="demo-text__paragraph">
+              С <span class="demo-text__highlight"> FinTrack </span> вы сможете
+              легко контролировать свои финансы, не тратя время на сложные
+              настройки.
+            </p>
+          </div>
+          <div class="demo-video">
+            <img
+              class="demo-video__image"
+              src="/frontend/images/demo_1.jpg"
+              alt="FinTrack Demo"
+            />
+            <div class="play-button"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Призыв к действию -->
+    <div class="cta-block padding-block">
+      <div class="wrapper">
+        <h2 class="cta-block__title">Готовы взять финансы под контроль?</h2>
+        <p class="cta-block__description">
+          С FinTrack управление личными финансами становится не только простым,
+          но и увлекательным!
+        </p>
+        <a href="/frontend/sign-up.html" class="btn cta-block__btn"
+          >Начать сейчас!</a
+        >
+      </div>
+    </div>
+
+    <!-- Подвал -->
+    <div class="footer">
+      <div class="wrapper">
+        <div class="footer-grid">
+          <div class="footer-col">
+            <h3 class="footer-col__title">FinTrack</h3>
+            <p class="footer-col__description">
+              Ваш персональный финансовый помощник для учета расходов, анализа
+              бюджета и отслеживания инвестиций.
+            </p>
+          </div>
+          <div class="footer-col">
+            <h3 class="footer-col__title">Продукт</h3>
+            <ul class="footer-links">
+              <li class="footer-links__item">
+                <a href="#features" class="footer-link">Возможности</a>
+              </li>
+              <li class="footer-links__item">
+                <a href="#" class="footer-link">Приложения</a>
+              </li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h3 class="footer-col__title">Ресурсы</h3>
+            <ul class="footer-links">
+              <li class="footer-links__item">
+                <a
+                  href="https://lifehacker.ru/pravila-finansov/"
+                  class="footer-link"
+                  target="»_blank»"
+                  >Финансовые советы</a
+                >
+              </li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h3 class="footer-col__title">Компания</h3>
+            <ul class="footer-links">
+              <li class="footer-links__item">
+                <a href="#" class="footer-link">О нас</a>
+              </li>
+              <li class="footer-links__item">
+                <a href="https://t.me/ndlvrmm" class="footer-link">Телеграм</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="/frontend/script/lending-script.js"></script>
+  </body>
+</html>

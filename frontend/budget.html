@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FinTrack - Бюджет</title>
+    <link
+      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/frontend/css/budget.css" />
+    <link rel="stylesheet" href="/frontend/css/sidebar.css" />
+    <link rel="stylesheet" href="/frontend/css/header.css" />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="/frontend/images/icon_logo.png"
+    />
+  </head>
+  <body>
+    <!-- Боковое меню -->
+    <div class="sidebar">
+      <div class="logo">
+        <img src="/frontend/images/logo.png" alt="FinTrack" />
+        <p>FinTrack</p>
+      </div>
+      <ul class="main">
+        <li>
+          <a href="/frontend/dashboard.html"
+            ><i class="bx bxs-dashboard"></i><span>Дашборд</span></a
+          >
+        </li>
+        <li>
+          <a href="/frontend/transactions.html"
+            ><i class="bx bx-transfer-alt"></i><span>Транзакции</span></a
+          >
+        </li>
+        <li class="active">
+          <a href="/frontend/budget.html"
+            ><i class="bx bx-briefcase"></i><span>Бюджет</span></a
+          >
+        </li>
+        <li>
+          <a href="/frontend/statistics.html"
+            ><i class="bx bx-stats"></i><span>Статистика</span></a
+          >
+        </li>
+        <li>
+          <a href="/frontend/calendar.html"
+            ><i class="bx bx-calendar"></i><span>Календарь</span></a
+          >
+        </li>
+        <li>
+          <a href="/frontend/goals.html"
+            ><i class="bx bxs-star-half"></i><span>Цели</span></a
+          >
+        </li>
+      </ul>
+    </div>
+
+    <!-- Основной контент -->
+    <div class="content-wrapper">
+      <!-- Верхнее меню -->
+      <div class="header">
+        <div class="greeting">
+          <h1 id="greeting-text">Загрузка...</h1>
+        </div>
+        <div class="header-right">
+          <div class="notifications">
+            <i class="bx bx-bell"></i>
+            <span class="notification-badge">0</span>
+            <div class="notifications-dropdown"></div>
+          </div>
+          <div class="profile">
+            <a href="/frontend/profile.html">
+              <img src="/frontend/images/avatar.jpg" alt="Профиль" />
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Основное содержимое -->
+      <main class="main-content">
+        <div class="budget-page">
+          <div class="budget-header">
+            <h2>Управление бюджетом</h2>
+            <div class="budget-actions">
+              <div class="month-selector">
+                <select id="month-select" class="form-control"></select>
+              </div>
+              <button id="currency-toggle" class="currency-toggle">₽</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h3>Установить лимиты</h3>
+              <button id="add-category" class="btn-secondary">
+                <i class="bx bx-plus"></i> Добавить категорию
+              </button>
+            </div>
+            <div class="budget-categories">
+              <div class="loader">
+                <div class="spinner"></div>
+                <p>Загрузка данных...</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h3>Распределение бюджета</h3>
+            </div>
+            <div class="chart-container">
+              <div class="loader">
+                <div class="spinner"></div>
+                <p>Загрузка графика...</p>
+              </div>
+              <canvas id="budgetChart"></canvas>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h3>Статистика за месяц</h3>
+            </div>
+            <div class="monthly-stats">
+              <div class="stat-item">
+                <div class="stat-circle success">
+                  <i class="bx bx-check"></i>
+                </div>
+                <div class="stat-info">
+                  <span class="stat-value">0</span>
+                  <span class="stat-label">Категорий в рамках бюджета</span>
+                </div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-circle danger"><i class="bx bx-x"></i></div>
+                <div class="stat-info">
+                  <span class="stat-value">0</span>
+                  <span class="stat-label">Превышенных лимита</span>
+                </div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-circle primary">
+                  <i class="bx bx-trending-up"></i>
+                </div>
+                <div class="stat-info">
+                  <span class="stat-value">0 ₽</span>
+                  <span class="stat-label">Общая экономия</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="export-section">
+            <button id="export-report" class="btn-primary">
+              <i class="bx bx-download"></i> Экспортировать отчет
+            </button>
+          </div>
+        </div>
+
+        <!-- Модальное окно -->
+        <div class="modal" id="category-modal">
+          <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div class="modal-header">
+              <i class="bx bx-wallet modal-icon"></i>
+              <h3>Добавить категорию</h3>
+            </div>
+            <div class="modal-body">
+              <div class="form-group">
+                <label for="category-select"
+                  ><i class="bx bx-category"></i> Категория</label
+                >
+                <select id="category-select" class="form-control">
+                  <option value="">Выберите категорию</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="category-limit"
+                  ><i class="bx bx-money"></i> Лимит</label
+                >
+                <input
+                  type="number"
+                  id="category-limit"
+                  class="form-control"
+                  placeholder="Введите сумму"
+                  min="0"
+                  step="100"
+                />
+              </div>
+            </div>
+            <div class="modal-actions">
+              <button id="cancel-category" class="btn-secondary">Отмена</button>
+              <button id="save-category" class="btn-primary">
+                <i class="bx bx-save"></i> Сохранить
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Уведомление -->
+        <div id="notification" class="notification hidden"></div>
+      </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="/frontend/script/budget.js"></script>
+    <script src="/frontend/script/greeting.js"></script>
+  </body>
+</html>
