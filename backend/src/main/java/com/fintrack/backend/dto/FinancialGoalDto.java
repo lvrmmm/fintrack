@@ -16,7 +16,7 @@ public class FinancialGoalDto {
     private BigDecimal targetAmount;
     private BigDecimal currentAmount;
     private LocalDate deadline;
-    private boolean isCompleted;
+    private boolean completed;
     private Priority priority;
     private String notes;
     private GoalType type;

@@ -4,6 +4,9 @@ import com.fintrack.backend.model.FinancialGoal;
 import com.fintrack.backend.model.Priority;
 import com.fintrack.backend.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
@@ -20,9 +23,13 @@ public interface FinancialGoalRepository extends JpaRepository<FinancialGoal, Lo
 
     Optional<FinancialGoal> findByIdAndUserId(Long id, Long userId);
 
-    long countByUserAndIsCompletedTrue(User user);
+    long countByUserAndCompletedTrue(User user);
 
-    long countByUserAndIsCompletedFalseAndDeadlineAfter(User user, LocalDate now);
+    long countByUserAndCompletedFalseAndDeadlineAfter(User user, LocalDate now);
 
-    long countByUserAndIsCompletedFalseAndDeadlineBefore(User user, LocalDate now);
+    long countByUserAndCompletedFalseAndDeadlineBefore(User user, LocalDate now);
+
+    @Modifying
+    @Query("UPDATE FinancialGoal g SET g.completed = true WHERE g.id = :id AND g.user.id = :userId")
+    int markAsCompleted(@Param("userId") Long userId, @Param("id") Long id);
 }

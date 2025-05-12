@@ -1,10 +1,7 @@
 package com.fintrack.backend.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -32,7 +29,9 @@ public class FinancialGoal {
     @Column(nullable = false)
     private LocalDate deadline;
 
-    private boolean isCompleted;
+    @Setter
+    @Getter
+    private boolean completed;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -48,4 +47,6 @@ public class FinancialGoal {
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+
 }
