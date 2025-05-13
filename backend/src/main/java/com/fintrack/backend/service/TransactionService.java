@@ -5,10 +5,12 @@ import com.fintrack.backend.dto.request.TransactionCreateRequest;
 import com.fintrack.backend.dto.request.TransactionUpdateRequest;
 import com.fintrack.backend.dto.response.TransactionResponse;
 import com.fintrack.backend.dto.response.TransactionStatsResponse;
+import com.fintrack.backend.exception.AccountNotFoundException;
 import com.fintrack.backend.exception.TransactionNotFoundException;
 import com.fintrack.backend.exception.UserNotFoundException;
 import com.fintrack.backend.mapper.TransactionMapper;
 import com.fintrack.backend.model.*;
+import com.fintrack.backend.repository.AccountRepository;
 import com.fintrack.backend.repository.TransactionRepository;
 import com.fintrack.backend.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -30,14 +32,24 @@ public class TransactionService {
     private final TransactionRepository transactionRepository;
     private final UserRepository userRepository;
     private final TransactionMapper transactionMapper;
+    private final AccountRepository accountRepository;
+    private final AccountService accountService;
 
     @Transactional
     public TransactionResponse createTransaction(Long userId, TransactionCreateRequest request) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
 
+        // Проверяем, что счет принадлежит пользователю
+        Account account = accountRepository.findByIdAndUserId(request.getAccountId(), userId)
+                .orElseThrow(() -> new AccountNotFoundException("Account not found or doesn't belong to user"));
+
         Transaction transaction = transactionMapper.toEntity(request, user);
+        transaction.setAccount(account);
         transactionRepository.save(transaction);
+
+        // Обновляем баланс счета
+        accountService.updateAccountBalance(account.getId(), transaction.getAmount(), transaction.getType());
 
         return transactionMapper.toResponse(transaction);
     }
@@ -72,6 +84,12 @@ public class TransactionService {
         Transaction transaction = transactionRepository.findByIdAndUserId(transactionId, userId)
                 .orElseThrow(() -> new TransactionNotFoundException("Transaction not found"));
 
+        // Сохраняем старые значения для отката баланса
+        BigDecimal oldAmount = transaction.getAmount();
+        TransactionType oldType = transaction.getType();
+        Account oldAccount = transaction.getAccount();
+
+        // Обновляем поля транзакции
         if (request.getAmount() != null) {
             transaction.setAmount(request.getAmount());
         }
@@ -90,10 +108,27 @@ public class TransactionService {
         if (request.getType() != null) {
             transaction.setType(request.getType());
         }
+        if (request.getAccountId() != null) {
+            Account newAccount = accountRepository.findByIdAndUserId(request.getAccountId(), userId)
+                    .orElseThrow(() -> new AccountNotFoundException("Account not found"));
+            transaction.setAccount(newAccount);
+        }
 
-        // Сохраняем обновленную транзакцию
+        // Откатываем старую транзакцию
+        accountService.updateAccountBalance(
+                oldAccount.getId(),
+                oldAmount,
+                oldType == TransactionType.INCOME ? TransactionType.EXPENSE : TransactionType.INCOME
+        );
+
+        // Применяем новую транзакцию
+        accountService.updateAccountBalance(
+                transaction.getAccount().getId(),
+                transaction.getAmount(),
+                transaction.getType()
+        );
+
         transactionRepository.save(transaction);
-
         return transactionMapper.toResponse(transaction);
     }
 
@@ -101,8 +136,17 @@ public class TransactionService {
     public void deleteTransaction(Long userId, Long transactionId) {
         Transaction transaction = transactionRepository.findByIdAndUserId(transactionId, userId)
                 .orElseThrow(() -> new TransactionNotFoundException("Transaction not found"));
+
+        // Откатываем транзакцию
+        accountService.updateAccountBalance(
+                transaction.getAccount().getId(),
+                transaction.getAmount(),
+                transaction.getType() == TransactionType.INCOME ? TransactionType.EXPENSE : TransactionType.INCOME
+        );
+
         transactionRepository.delete(transaction);
     }
+
 
     @Transactional(readOnly = true)
     public TransactionStatsResponse getTransactionStats(Long userId, LocalDate startDate, LocalDate endDate) {

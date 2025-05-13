@@ -17,17 +17,23 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long>,
     // Поиск транзакции по ID и пользователю
     Optional<Transaction> findByIdAndUserId(Long transactionId, Long userId);
 
+    // Проверка существования транзакций для счета
+    boolean existsByAccountId(Long accountId);
+
     // Сумма транзакций по типу (доход или расход) для пользователя за период
     @Query("SELECT SUM(t.amount) FROM Transaction t WHERE t.user.id = :userId AND t.type = :type AND t.date BETWEEN :startDate AND :endDate")
     BigDecimal sumAmountByType(Long userId, TransactionType type, LocalDate startDate, LocalDate endDate);
 
-    // Поиск транзакций по пользователю и категории (если фильтрация нужна по категории)
+    // Поиск транзакций по пользователю и категории
     List<Transaction> findByUserIdAndCategory(Long userId, TransactionCategory category);
 
-    // Поиск транзакций по пользователю и периоду времени (с использованием LocalDate)
+    // Поиск транзакций по пользователю и периоду времени
     List<Transaction> findByUserIdAndDateBetween(Long userId, LocalDate startDate, LocalDate endDate);
 
-    // Обновленный метод для фильтрации транзакций с учетом всех параметров
+    // Поиск транзакций по счету
+    List<Transaction> findByAccountId(Long accountId);
+
+    // Фильтрация транзакций с учетом всех параметров
     @Query("SELECT t FROM Transaction t WHERE " +
             "(t.type = :type OR :type IS NULL) AND " +
             "(t.category = :category OR :category IS NULL) AND " +
@@ -55,7 +61,6 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long>,
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate);
 
-    // Альтернативный вариант с передачей объекта User
     @Query("SELECT COALESCE(SUM(t.amount), 0) FROM Transaction t " +
             "WHERE t.user = :user AND t.category = :category " +
             "AND t.date BETWEEN :startDate AND :endDate")

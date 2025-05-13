@@ -100,6 +100,18 @@
 
     <!-- Основное содержимое -->
     <main class="main-content transactions-page">
+      <!-- Панель баланса -->
+      <section class="balance-panel">
+        <div class="balance-card total-balance">
+          <h3>Общий баланс</h3>
+          <div class="balance-amount" id="total-balance">Загрузка...</div>
+          <div class="balance-currency" id="main-currency"></div>
+        </div>
+        <div class="accounts-list" id="accounts-list">
+          <!-- Счета будут загружены динамически -->
+        </div>
+      </section>
+
       <!-- Фильтры -->
       <section class="filters">
         <h2>Фильтры</h2>
@@ -108,8 +120,8 @@
             Тип транзакции:
             <select id="type-filter">
               <option value="all">Все</option>
-              <option value="income">Доходы</option>
-              <option value="expense">Расходы</option>
+              <option value="INCOME">Доходы</option>
+              <option value="EXPENSE">Расходы</option>
             </select>
           </label>
           <label>
@@ -133,10 +145,7 @@
             Счёт:
             <select id="account-filter">
               <option value="all">Все</option>
-              <option value="CASH">Наличные</option>
-              <option value="CARD">Карта</option>
-              <option value="BANK">Банк</option>
-              <option value="OTHER">Другое</option>
+              <!-- Опции будут загружены динамически -->
             </select>
           </label>
           <label>
@@ -154,18 +163,23 @@
         </div>
       </section>
 
-      <!-- График недельных трат -->
-      <section class="chart-section">
-        <div class="chart-header">
-          <h3>Недельная статистика</h3>
-          <div class="currency-toggle">
-            <button id="currency-toggle" class="btn-icon">₽</button>
-          </div>
-        </div>
+      <!-- Графики счетов -->
+      <section class="charts-section">
         <div class="chart-container">
+          <div class="chart-header">
+            <h3>Недельная статистика</h3>
+            <div class="currency-toggle">
+              <button id="currency-toggle" class="btn-icon">₽</button>
+            </div>
+          </div>
           <canvas id="weeklyProgressChart"></canvas>
         </div>
+        <div class="chart-container">
+          <h3>Динамика баланса</h3>
+          <canvas id="balanceHistoryChart"></canvas>
+        </div>
       </section>
+
       <!-- Таблица транзакций -->
       <section class="transactions-list-container">
         <div class="transactions-actions">
@@ -201,7 +215,7 @@
       </section>
     </main>
 
-    <!-- Модальное окно -->
+    <!-- Модальное окно добавления транзакции -->
     <div class="modal" id="transaction-modal">
       <div class="modal-content">
         <span class="close-modal">&times;</span>
@@ -228,16 +242,9 @@
             </select>
           </div>
           <div class="form-group">
-            <label for="transaction-payment-method">Счёт</label>
-            <select
-              id="transaction-payment-method"
-              name="paymentMethod"
-              required
-            >
-              <option value="CASH">Наличные</option>
-              <option value="CARD">Карта</option>
-              <option value="BANK">Банк</option>
-              <option value="OTHER">Другое</option>
+            <label for="transaction-account">Счёт</label>
+            <select id="transaction-account" name="accountId" required>
+              <!-- Опции будут загружены динамически -->
             </select>
           </div>
           <div class="form-group">
@@ -247,12 +254,13 @@
               id="transaction-amount"
               name="amount"
               step="0.01"
+              min="0.01"
               required
             />
           </div>
           <div class="form-group">
             <label for="transaction-type">Тип</label>
-            <select id="transaction-type" name="type">
+            <select id="transaction-type" name="type" required>
               <option value="INCOME">Доход</option>
               <option value="EXPENSE">Расход</option>
             </select>
@@ -276,6 +284,23 @@
         </form>
       </div>
     </div>
+
+    <!-- Модальное окно истории счета -->
+    <div class="modal" id="account-history-modal">
+      <div class="modal-content wide">
+        <span class="close-modal">&times;</span>
+        <h3 id="account-history-title">История баланса</h3>
+        <div class="chart-container">
+          <canvas id="accountHistoryChart"></canvas>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary close-modal">
+            Закрыть
+          </button>
+        </div>
+      </div>
+    </div>
+
     <script src="/frontend/script/greeting.js"></script>
     <script src="/frontend/script/transactions.js"></script>
   </body>

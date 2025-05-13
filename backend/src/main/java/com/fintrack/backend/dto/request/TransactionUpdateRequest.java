@@ -16,6 +16,8 @@ public class TransactionUpdateRequest {
 
     private PaymentMethod paymentMethod;
 
+    private Long accountId;
+
     private LocalDate date;
 
     private String description;
