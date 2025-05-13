@@ -1,14 +1,17 @@
 package com.fintrack.backend.controller;
 
+import com.fintrack.backend.dto.request.BudgetRequest;
 import com.fintrack.backend.dto.response.BudgetDto;
 import com.fintrack.backend.dto.response.BudgetStatsDto;
 import com.fintrack.backend.model.BudgetId;
 import com.fintrack.backend.model.TransactionCategory;
 import com.fintrack.backend.model.User;
+import com.fintrack.backend.security.JwtTokenProvider;
 import com.fintrack.backend.service.BudgetService;
 import com.fintrack.backend.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -22,6 +25,7 @@ public class BudgetController {
 
     private final BudgetService budgetService;
     private final UserService userService;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @GetMapping
     public ResponseEntity<List<BudgetDto>> getBudgetForMonth(
@@ -39,11 +43,19 @@ public class BudgetController {
 
     @PostMapping
     public ResponseEntity<BudgetDto> setBudgetLimit(
-            @RequestParam TransactionCategory category,
-            @RequestParam BigDecimal limit,
-            @RequestParam(required = false) YearMonth month) {
+            @RequestBody BudgetRequest request,
+            @RequestHeader("Authorization") String authHeader) {
+
+        // Проверка авторизации
+        String token = authHeader.substring(7); // Удаляем "Bearer "
+        if (!jwtTokenProvider.validateToken(token)) {
+            throw new AccessDeniedException("Invalid token");
+        }
+
         return ResponseEntity.ok(budgetService.setBudgetLimit(
-                category, limit, month != null ? month : YearMonth.now()));
+                request.getCategory(),
+                request.getLimit(),
+                request.getMonth() != null ? request.getMonth() : YearMonth.now()));
     }
 
     @DeleteMapping

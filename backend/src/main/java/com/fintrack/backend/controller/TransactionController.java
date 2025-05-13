@@ -8,12 +8,14 @@ import com.fintrack.backend.model.PaymentMethod;
 import com.fintrack.backend.model.TransactionCategory;
 import com.fintrack.backend.model.TransactionType;
 import com.fintrack.backend.security.JwtTokenProvider;
+import com.fintrack.backend.service.AccountService;
 import com.fintrack.backend.service.TransactionService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -29,6 +31,7 @@ public class TransactionController {
 
     private final TransactionService transactionService;
     private final JwtTokenProvider jwtTokenProvider;
+    private final AccountService accountService;
 
     @GetMapping
     public ResponseEntity<List<TransactionResponse>> getUserTransactions(
@@ -49,8 +52,13 @@ public class TransactionController {
             @Valid @RequestBody TransactionCreateRequest request) {
 
         Long userId = getUserIdFromToken(token);
-        TransactionResponse response = transactionService.createTransaction(userId, request);
 
+        // Проверка принадлежности счета пользователю
+        if (!accountService.isAccountBelongsToUser(request.getAccountId(), userId)) {
+            throw new AccessDeniedException("Account doesn't belong to user");
+        }
+
+        TransactionResponse response = transactionService.createTransaction(userId, request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 

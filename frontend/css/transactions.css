@@ -1,7 +1,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@600;700&display=swap");
 
 :root {
-  /* Сохраняем оригинальную палитру из бюджета */
+  /* Colors */
   --primary: #2041ff;
   --primary-hover: #1a35e0;
   --secondary: #a0c4da;
@@ -11,15 +11,21 @@
   --white: #ffffff;
   --light-bg: #f8f9fa;
   --gray: #7f8c8d;
+
+  /* Status colors */
   --success: #2ecc71;
   --danger: #e74c3c;
   --warning: #f39c12;
+
+  /* Spacing & Effects */
   --border-radius: 12px;
   --box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
   --transition: all 0.3s ease;
 }
 
-/* Глобальные стили (как в бюджете) */
+/* =============== */
+/* GLOBAL SETTINGS */
+/* =============== */
 * {
   margin: 0;
   padding: 0;
@@ -27,25 +33,199 @@
   font-family: "Inter", Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* Контейнер страницы - приводим к стилю бюджета */
+/* ================= */
+/* LAYOUT STRUCTURE */
+/* ================= */
 .main-content.transactions-page {
   background: var(--light-bg);
-  padding: 100px;
+  padding: 30px;
   width: calc(100% - 250px);
   margin-left: 250px;
   min-height: calc(100vh - 80px);
   display: flex;
   flex-direction: column;
-  gap: 24px; /* Увеличиваем отступы как в бюджете */
+  gap: 24px;
 }
 
-/* Фильтры - стилизуем как карточки бюджета */
+/* ============== */
+/* BALANCE PANEL */
+/* ============== */
+.balance-panel {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 24px;
+}
+
+@media (max-width: 768px) {
+  .balance-panel {
+    grid-template-columns: 1fr;
+  }
+}
+
+.balance-card {
+  background: var(--white);
+  border-radius: var(--border-radius);
+  padding: 24px;
+  box-shadow: var(--box-shadow);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.balance-card.total-balance {
+  background: var(--primary);
+  color: white;
+}
+
+.balance-card h3 {
+  font-family: "Manrope", sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: inherit;
+}
+
+.balance-amount {
+  font-family: "Manrope", sans-serif;
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.balance-amount.negative {
+  color: var(--danger);
+}
+
+.account-currency {
+  font-size: 14px;
+  color: var(--gray);
+}
+
+.total-balance .account-currency {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.accounts-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+@media (max-width: 576px) {
+  .accounts-list {
+    grid-template-columns: 1fr;
+  }
+}
+
+.account-item {
+  background: var(--white);
+  border-radius: var(--border-radius);
+  padding: 16px;
+  box-shadow: var(--box-shadow);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.account-item:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+}
+
+.account-name {
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--dark);
+}
+
+.account-balance {
+  font-family: "Manrope", sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.account-payment-method {
+  font-size: 13px;
+  color: var(--gray);
+}
+
+/* ============= */
+/* CHARTS SECTION */
+/* ============= */
+.charts-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+@media (max-width: 992px) {
+  .charts-section {
+    grid-template-columns: 1fr;
+  }
+}
+
+.chart-container {
+  background: var(--white);
+  border-radius: var(--border-radius);
+  padding: 24px;
+  box-shadow: var(--box-shadow);
+  height: 350px;
+  display: flex;
+  flex-direction: column;
+}
+
+.chart-container h3 {
+  font-family: "Manrope", sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--dark);
+  margin-bottom: 20px;
+}
+
+.chart-wrapper {
+  flex: 1;
+  position: relative;
+}
+
+.weekly-chart .chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.weekly-chart .chart-header h3 {
+  margin-bottom: 0;
+}
+
+#currency-toggle {
+  background: var(--light-bg);
+  color: var(--primary);
+  border: none;
+  border-radius: var(--border-radius);
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+#currency-toggle:hover {
+  background: var(--primary);
+  color: white;
+}
+
+/* ============= */
+/* FILTERS PANEL */
+/* ============= */
 .filters {
   background: var(--white);
   border-radius: var(--border-radius);
   padding: 24px;
   box-shadow: var(--box-shadow);
-  margin-bottom: 0;
 }
 
 .filters h2 {
@@ -87,7 +267,15 @@
   box-shadow: 0 0 0 3px rgba(32, 65, 255, 0.1);
 }
 
-/* Кнопки - полное соответствие стилю бюджета */
+.filters-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+/* ========== */
+/* BUTTONS */
+/* ========== */
 .btn-primary {
   background: var(--primary);
   color: white;
@@ -130,60 +318,9 @@
   color: var(--white);
 }
 
-.filters-actions {
-  display: flex;
-  gap: 12px;
-  margin-top: 16px;
-}
-
-/* График - оформляем как карточку бюджета */
-.chart-section {
-  background: var(--white);
-  border-radius: var(--border-radius);
-  padding: 24px;
-  box-shadow: var(--box-shadow);
-}
-
-.chart-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.chart-header h3 {
-  font-family: "Manrope", sans-serif;
-  font-size: 18px;
-  font-weight: 600;
-  color: var(--dark);
-}
-
-#currency-toggle {
-  background: var(--light-bg);
-  color: var(--primary);
-  border: none;
-  border-radius: var(--border-radius);
-  padding: 8px 16px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: var(--transition);
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-#currency-toggle:hover {
-  background: var(--primary);
-  color: white;
-}
-
-.chart-container {
-  height: 250px;
-  width: 100%;
-}
-
-/* Таблица - стилизуем в духе бюджета */
+/* ================== */
+/* TRANSACTIONS TABLE */
+/* ================== */
 .transactions-list-container {
   background: var(--white);
   border-radius: var(--border-radius);
@@ -224,6 +361,22 @@
   background: rgba(32, 65, 255, 0.03);
 }
 
+/* Table cell states */
+.income {
+  color: var(--success);
+  font-weight: 600;
+}
+
+.expense {
+  color: var(--danger);
+  font-weight: 600;
+}
+
+.highlight {
+  background: rgba(231, 76, 60, 0.1) !important;
+}
+
+/* Empty state */
 .no-transactions {
   text-align: center;
   padding: 2rem;
@@ -248,20 +401,7 @@
   color: #999;
 }
 
-.income {
-  color: var(--success);
-  font-weight: 600;
-}
-
-.expense {
-  color: var(--danger);
-  font-weight: 600;
-}
-
-.highlight {
-  background: rgba(231, 76, 60, 0.1) !important;
-}
-
+/* Action buttons */
 .actions button {
   background: none;
   border: none;
@@ -287,7 +427,9 @@
   background: rgba(231, 76, 60, 0.1);
 }
 
-/* Модальное окно - идентично бюджету */
+/* ============= */
+/* MODAL DIALOG */
+/* ============= */
 .modal {
   display: none;
   position: fixed;
@@ -318,6 +460,10 @@
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
   position: relative;
   animation: modalFadeIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.modal.wide .modal-content {
+  max-width: 800px;
 }
 
 @keyframes modalFadeIn {
@@ -353,6 +499,7 @@
   color: var(--dark);
 }
 
+/* Form elements */
 .form-group {
   margin-bottom: 16px;
 }
@@ -392,7 +539,345 @@
   margin-top: 24px;
 }
 
-/* Адаптивность - как в бюджете */
+/* History chart in modal */
+#accountHistoryChart {
+  height: 400px;
+  margin-bottom: 24px;
+}
+
+/* Стили для панели баланса */
+.balance-panel {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.total-balance {
+  flex: 1;
+  background: linear-gradient(135deg, #2196f3, #03a9f4);
+  color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.balance-amount {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin: 10px 0;
+}
+
+.balance-currency {
+  font-size: 1.2rem;
+  opacity: 0.8;
+}
+
+.accounts-list {
+  flex: 2;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 15px;
+}
+
+.account-card {
+  background: white;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s;
+}
+
+.account-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.account-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.account-header h4 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.history-btn {
+  background: none;
+  border: none;
+  color: #666;
+  cursor: pointer;
+  font-size: 1.2rem;
+}
+
+.account-balance {
+  font-size: 1.3rem;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.account-balance span {
+  font-size: 0.9rem;
+  opacity: 0.7;
+}
+
+.account-payment-method {
+  font-size: 0.8rem;
+  color: #666;
+}
+
+/* Стили для категорий транзакций */
+.category-badge {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  color: white;
+}
+
+.category-badge.salary {
+  background-color: #4caf50;
+}
+.category-badge.groceries {
+  background-color: #8bc34a;
+}
+.category-badge.transport {
+  background-color: #ffc107;
+  color: #333;
+}
+.category-badge.utilities {
+  background-color: #ff9800;
+}
+.category-badge.entertainment {
+  background-color: #e91e63;
+}
+.category-badge.health {
+  background-color: #9c27b0;
+}
+.category-badge.education {
+  background-color: #3f51b5;
+}
+.category-badge.clothing {
+  background-color: #00bcd4;
+}
+.category-badge.travel {
+  background-color: #009688;
+}
+.category-badge.investments {
+  background-color: #795548;
+}
+.category-badge.other {
+  background-color: #607d8b;
+}
+
+.type-badge {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  color: white;
+}
+
+.type-badge.income {
+  background-color: #4caf50;
+}
+.type-badge.expense {
+  background-color: #f44336;
+}
+
+/* Стили для таблицы транзакций */
+.transactions-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.transactions-table th,
+.transactions-table td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+
+.transactions-table th {
+  background-color: #f8f9fa;
+  font-weight: 500;
+}
+
+.transactions-table tr:hover {
+  background-color: #f5f5f5;
+}
+
+.income {
+  color: #4caf50;
+  font-weight: bold;
+}
+
+.expense {
+  color: #f44336;
+  font-weight: bold;
+}
+
+.no-transactions {
+  text-align: center;
+  padding: 30px;
+  color: #666;
+}
+
+/* Стили для графиков */
+.charts-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.chart-container {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.chart-header h3 {
+  margin: 0;
+}
+
+/* Стили для модальных окон */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+  background-color: white;
+  margin: 5% auto;
+  padding: 25px;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 500px;
+  position: relative;
+  animation: modalFadeIn 0.3s;
+}
+
+.modal-content.wide {
+  max-width: 800px;
+}
+
+.close-modal {
+  position: absolute;
+  right: 20px;
+  top: 20px;
+  font-size: 1.5rem;
+  color: #666;
+  cursor: pointer;
+  background: none;
+  border: none;
+}
+
+.modal h3 {
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 500;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.form-group textarea {
+  min-height: 60px;
+  resize: vertical;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+/* Анимации */
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Уведомления */
+.notification {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 12px 20px;
+  border-radius: 4px;
+  color: white;
+  z-index: 1100;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.notification.success {
+  background-color: #4caf50;
+}
+
+.notification.error {
+  background-color: #f44336;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  .balance-panel {
+    flex-direction: column;
+  }
+
+  .charts-section {
+    grid-template-columns: 1fr;
+  }
+
+  .transactions-table {
+    display: block;
+    overflow-x: auto;
+  }
+}
+
+/* ================= */
+/* RESPONSIVE DESIGN */
+/* ================= */
 @media (max-width: 1200px) {
   .main-content.transactions-page {
     width: calc(100% - 200px);

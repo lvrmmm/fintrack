@@ -97,14 +97,21 @@
             </div>
           </div>
 
-          <div class="card">
+          <!-- Добавляем табы для разделения доходов/расходов -->
+          <div class="budget-tabs">
+            <button class="tab-btn active" data-tab="expenses">Расходы</button>
+            <button class="tab-btn" data-tab="income">Доходы</button>
+          </div>
+
+          <!-- Карточка для расходов -->
+          <div class="card expenses-tab">
             <div class="card-header">
-              <h3>Установить лимиты</h3>
-              <button id="add-category" class="btn-secondary">
+              <h3>Лимиты расходов</h3>
+              <!-- <button id="add-expense-category" class="btn-secondary">
                 <i class="bx bx-plus"></i> Добавить категорию
-              </button>
+              </button> -->
             </div>
-            <div class="budget-categories">
+            <div class="budget-categories expense-categories">
               <div class="loader">
                 <div class="spinner"></div>
                 <p>Загрузка данных...</p>
@@ -112,9 +119,31 @@
             </div>
           </div>
 
+          <!-- Карточка для доходов (без возможности установки лимитов) -->
+          <div class="card income-tab hidden">
+            <div class="card-header">
+              <h3>Доходы за месяц</h3>
+            </div>
+            <div class="budget-categories income-categories">
+              <div class="loader">
+                <div class="spinner"></div>
+                <p>Загрузка данных...</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- График распределения бюджета -->
           <div class="card">
             <div class="card-header">
               <h3>Распределение бюджета</h3>
+              <div class="chart-toggle">
+                <button class="chart-toggle-btn active" data-type="limits">
+                  По лимитам
+                </button>
+                <button class="chart-toggle-btn" data-type="actual">
+                  По факту
+                </button>
+              </div>
             </div>
             <div class="chart-container">
               <div class="loader">
@@ -125,6 +154,7 @@
             </div>
           </div>
 
+          <!-- Статистика -->
           <div class="card">
             <div class="card-header">
               <h3>Статистика за месяц</h3>
@@ -143,7 +173,7 @@
                 <div class="stat-circle danger"><i class="bx bx-x"></i></div>
                 <div class="stat-info">
                   <span class="stat-value">0</span>
-                  <span class="stat-label">Превышенных лимита</span>
+                  <span class="stat-label">Превышенных лимитов</span>
                 </div>
               </div>
               <div class="stat-item">
@@ -155,9 +185,19 @@
                   <span class="stat-label">Общая экономия</span>
                 </div>
               </div>
+              <div class="stat-item">
+                <div class="stat-circle info">
+                  <i class="bx bx-money"></i>
+                </div>
+                <div class="stat-info">
+                  <span class="stat-value">0 ₽</span>
+                  <span class="stat-label">Общие доходы</span>
+                </div>
+              </div>
             </div>
           </div>
 
+          <!-- Экспорт -->
           <div class="export-section">
             <button id="export-report" class="btn-primary">
               <i class="bx bx-download"></i> Экспортировать отчет

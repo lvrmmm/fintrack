@@ -27,4 +27,7 @@ public class TransactionCreateRequest {
 
     @NotNull
     private TransactionType type;
+
+    @NotNull
+    private Long accountId;
 }
