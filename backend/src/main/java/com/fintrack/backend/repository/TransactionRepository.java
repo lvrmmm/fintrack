@@ -30,8 +30,10 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long>,
     // Поиск транзакций по пользователю и периоду времени
     List<Transaction> findByUserIdAndDateBetween(Long userId, LocalDate startDate, LocalDate endDate);
 
-    // Поиск транзакций по счету
     List<Transaction> findByAccountId(Long accountId);
+
+    @Query("SELECT t FROM Transaction t WHERE t.account.id = :accountId")
+    List<Transaction> findByAccount(@Param("accountId") Long accountId);
 
     // Фильтрация транзакций с учетом всех параметров
     @Query("SELECT t FROM Transaction t WHERE " +

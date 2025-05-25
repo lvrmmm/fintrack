@@ -1,5 +1,6 @@
 package com.fintrack.backend.dto;
 
+import com.fintrack.backend.model.BalanceChangeType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,15 +11,10 @@ import java.time.LocalDate;
 
 @Data
 @Builder
-@NoArgsConstructor
 public class AccountBalanceHistoryDto {
-
     private LocalDate date;
     private BigDecimal balance;
-
-    // Конструктор для Hibernate
-    public AccountBalanceHistoryDto(LocalDate date, BigDecimal balance) {
-        this.date = date;
-        this.balance = balance;
-    }
+    private BigDecimal balanceChange;
+    private BalanceChangeType changeType;
+    private String description;
 }

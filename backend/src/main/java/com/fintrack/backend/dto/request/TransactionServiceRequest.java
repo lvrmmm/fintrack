@@ -1,24 +1,20 @@
 package com.fintrack.backend.dto.request;
 
-
-import java.math.BigDecimal;
-import java.time.LocalDate;
-
 import com.fintrack.backend.model.PaymentMethod;
 import com.fintrack.backend.model.TransactionCategory;
 import com.fintrack.backend.model.TransactionType;
-
 import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.Builder;
 import lombok.Data;
 
-
+import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @Data
 @Builder
-public class TransactionCreateRequest {
+public class TransactionServiceRequest {
     @NotNull
     private LocalDate date;
 

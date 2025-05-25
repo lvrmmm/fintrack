@@ -15,6 +15,7 @@ public class TransactionResponse {
     private Long id;
     private BigDecimal amount;
     private TransactionCategory category;
+    private Long accountId;
     private PaymentMethod paymentMethod;
     private LocalDate date;
     private String description;

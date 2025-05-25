@@ -1,7 +1,7 @@
 package com.fintrack.backend.controller;
 
-import com.fintrack.backend.dto.AccountBalanceHistoryDto;
 import com.fintrack.backend.dto.AccountDto;
+import com.fintrack.backend.dto.TotalBalanceHistoryDto;
 import com.fintrack.backend.dto.UserTotalBalanceDto;
 import com.fintrack.backend.dto.request.AccountCreateRequest;
 import com.fintrack.backend.dto.request.AccountUpdateRequest;
@@ -30,18 +30,16 @@ public class AccountController {
     public ResponseEntity<List<AccountDto>> getUserAccounts(
             @RequestHeader("Authorization") String token) {
         Long userId = getUserIdFromToken(token);
-        List<AccountDto> accounts = accountService.getUserAccounts(userId);
-        return ResponseEntity.ok(accounts);
+        return ResponseEntity.ok(accountService.getUserAccounts(userId));
     }
 
     // Получить счет по ID
-    @GetMapping("/{id}")
+    @GetMapping("/{accountId}")
     public ResponseEntity<AccountDto> getAccountById(
             @RequestHeader("Authorization") String token,
-            @PathVariable Long id) {
+            @PathVariable Long accountId) {
         Long userId = getUserIdFromToken(token);
-        AccountDto account = accountService.getAccountById(userId, id);
-        return ResponseEntity.ok(account);
+        return ResponseEntity.ok(accountService.getAccountById(userId, accountId));
     }
 
     // Создать новый счет
@@ -55,23 +53,23 @@ public class AccountController {
     }
 
     // Обновить счет
-    @PutMapping("/{id}")
+    @PutMapping("/{accountId}")
     public ResponseEntity<AccountDto> updateAccount(
             @RequestHeader("Authorization") String token,
-            @PathVariable Long id,
+            @PathVariable Long accountId,
             @Valid @RequestBody AccountUpdateRequest request) {
         Long userId = getUserIdFromToken(token);
-        AccountDto account = accountService.updateAccount(userId, id, request);
+        AccountDto account = accountService.updateAccount(userId, accountId, request);
         return ResponseEntity.ok(account);
     }
 
     // Удалить счет
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{accountId}")
     public ResponseEntity<Void> deleteAccount(
             @RequestHeader("Authorization") String token,
-            @PathVariable Long id) {
+            @PathVariable Long accountId) {
         Long userId = getUserIdFromToken(token);
-        accountService.deleteAccount(userId, id);
+        accountService.deleteAccount(userId, accountId);
         return ResponseEntity.noContent().build();
     }
 
@@ -84,15 +82,25 @@ public class AccountController {
         return ResponseEntity.ok(balanceInfo);
     }
 
-    // Получить историю баланса счета
-    @GetMapping("/{id}/history")
-    public ResponseEntity<List<AccountBalanceHistoryDto>> getAccountBalanceHistory(
+    @GetMapping("/total-balance-history")
+    public ResponseEntity<List<TotalBalanceHistoryDto>> getTotalBalanceHistory(
             @RequestHeader("Authorization") String token,
-            @PathVariable Long id,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+
         Long userId = getUserIdFromToken(token);
-        List<AccountBalanceHistoryDto> history = accountService.getAccountBalanceHistory(userId, id, startDate, endDate);
+
+        // Установка дефолтных значений (текущий месяц)
+        if (startDate == null) {
+            startDate = LocalDate.now().withDayOfMonth(1);
+        }
+        if (endDate == null) {
+            endDate = LocalDate.now();
+        }
+
+        List<TotalBalanceHistoryDto> history = accountService
+                .getUserTotalBalanceHistory(userId, startDate, endDate);
+
         return ResponseEntity.ok(history);
     }
 

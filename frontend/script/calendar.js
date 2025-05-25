@@ -149,11 +149,17 @@ document.addEventListener("DOMContentLoaded", function () {
           event.type
         )}`;
         eventElement.style.backgroundColor = event.color || "#3498db";
-        eventElement.textContent = event.title;
+        
+        // Добавлена проверка на null для заголовка события
+        eventElement.textContent = event.title ?? "Финансовое событие";
+        
         eventElement.dataset.id = event.id;
-        eventElement.title = `${event.title} (${formatDate(
+        
+        // Добавлена проверка на null для title атрибута
+        eventElement.title = `${event.title ?? "Финансовое событие"} (${formatDate(
           new Date(event.date)
         )})`;
+        
         eventElement.addEventListener("click", () => showEventDetails(event));
         eventsContainer.appendChild(eventElement);
       });
@@ -169,7 +175,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     return dayElement;
-  }
+}
 
   // Рендеринг списка предстоящих событий
   function renderUpcomingEvents() {
@@ -214,7 +220,8 @@ document.addEventListener("DOMContentLoaded", function () {
       const eventElement = createEventElement(event);
       eventsList.appendChild(eventElement);
     });
-  }
+}
+
 
   function createEventElement(event) {
     const eventElement = document.createElement("div");
@@ -227,15 +234,16 @@ document.addEventListener("DOMContentLoaded", function () {
       month: "long",
     });
 
+    // Добавлены проверки на null для title и amount
     eventElement.innerHTML = `
     <span class="event-date"><i class="bx bx-calendar"></i> ${dateStr}</span>
-    <span class="event-title">${event.title}</span>
+    <span class="event-title">${event.title ?? "Финансовове событие (название не указано)"}</span>
     ${
-      event.amount
+      event.amount !== null && event.amount !== undefined
         ? `<span class="event-amount">${formatCurrency(event.amount)}</span>`
         : ""
     }
-  `;
+    `;
 
     eventElement.addEventListener("click", () => showEventDetails(event));
     return eventElement;
@@ -328,12 +336,30 @@ document.addEventListener("DOMContentLoaded", function () {
       year: "numeric",
     });
 
+    const translateCategory = (category) => {
+      if (!category) return "Не указана";
+      const translations = {
+        SALARY: "Зарплата",
+      GROCERIES: "Продукты",
+      TRANSPORT: "Транспорт",
+      UTILITIES: "Жильё",
+      ENTERTAINMENT: "Развлечения",
+      HEALTH: "Здоровье",
+      EDUCATION: "Образование",
+      CLOTHING: "Одежда",
+      TRAVEL: "Путешествия",
+      INVESTMENTS: "Инвестиции",
+      OTHER: "Другое",
+      };
+      return translations[category] || category;
+    };
+
     eventDetailsContent.innerHTML = `
             <div class="event-detail">
                 <span class="event-detail-label">Описание:</span>
                 <span class="event-detail-value">${
-                  transaction.description
-                }</span>
+                transaction.description || (transaction.type === "INCOME" ? "Получение средств" : "Списание средств")
+            }</span>
             </div>
             <div class="event-detail">
                 <span class="event-detail-label">Тип:</span>
@@ -354,7 +380,7 @@ document.addEventListener("DOMContentLoaded", function () {
             <div class="event-detail">
                 <span class="event-detail-label">Категория:</span>
                 <span class="event-detail-value">${
-                  transaction.category || "Не указана"
+                  translateCategory(transaction.category)
                 }</span>
             </div>
             ${
@@ -440,10 +466,12 @@ document.addEventListener("DOMContentLoaded", function () {
       year: "numeric",
     });
 
+    const title = event.title ?? "Событие без названия";
+
     eventDetailsContent.innerHTML = `
             <div class="event-detail">
                 <span class="event-detail-label">Название:</span>
-                <span class="event-detail-value">${event.title}</span>
+                <span class="event-detail-value">${title}</span>
             </div>
             <div class="event-detail">
                 <span class="event-detail-label">Тип:</span>

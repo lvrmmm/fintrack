@@ -90,6 +90,7 @@
 .form-group input,
 .form-group textarea {
   width: 100%;
+  max-width: 400px;
   padding: 12px 15px;
   border: 1px solid #ddd;
   border-radius: 8px;
@@ -210,6 +211,7 @@
 /* Стили для выпадающего списка */
 .form-group select {
   width: 100%;
+  max-width: 400px;
   padding: 12px 15px;
   border: 1px solid #ddd;
   border-radius: 8px;

@@ -10,15 +10,9 @@ import java.math.BigDecimal;
 
 @Data
 public class AccountCreateRequest {
-    @NotBlank
-    private String name;
-
     @NotNull
     @DecimalMin(value = "0.0", inclusive = true)
     private BigDecimal initialBalance;
-
-    @NotBlank
-    private String currency;
 
     @NotNull
     private PaymentMethod paymentMethod;

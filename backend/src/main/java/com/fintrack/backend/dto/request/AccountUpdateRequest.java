@@ -5,7 +5,5 @@ import lombok.Data;
 
 @Data
 public class AccountUpdateRequest {
-    private String name;
-    private String currency;
     private PaymentMethod paymentMethod;
 }

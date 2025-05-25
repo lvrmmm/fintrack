@@ -1,28 +1,25 @@
 package com.fintrack.backend.controller;
 
-import com.fintrack.backend.dto.request.TransactionCreateRequest;
+import com.fintrack.backend.dto.request.TransactionServiceRequest;
 import com.fintrack.backend.dto.request.TransactionUpdateRequest;
 import com.fintrack.backend.dto.response.TransactionResponse;
 import com.fintrack.backend.dto.response.TransactionStatsResponse;
-import com.fintrack.backend.model.PaymentMethod;
-import com.fintrack.backend.model.TransactionCategory;
-import com.fintrack.backend.model.TransactionType;
+import com.fintrack.backend.model.*;
 import com.fintrack.backend.security.JwtTokenProvider;
-import com.fintrack.backend.service.AccountService;
+import com.fintrack.backend.security.UserPrincipal;
 import com.fintrack.backend.service.TransactionService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/transactions")
@@ -31,7 +28,6 @@ public class TransactionController {
 
     private final TransactionService transactionService;
     private final JwtTokenProvider jwtTokenProvider;
-    private final AccountService accountService;
 
     @GetMapping
     public ResponseEntity<List<TransactionResponse>> getUserTransactions(
@@ -46,21 +42,33 @@ public class TransactionController {
         return ResponseEntity.ok(response);
     }
 
+//    @PostMapping
+//    public ResponseEntity<TransactionResponse> createTransaction(
+//            @RequestHeader("Authorization") String token,
+//            @Valid @RequestBody TransactionCreateRequest request) {
+//
+//        Long userId = getUserIdFromToken(token);
+//
+//        // Проверка принадлежности счета пользователю
+//        if (!accountService.isAccountBelongsToUser(request.getAccountId(), userId)) {
+//            throw new AccessDeniedException("Account doesn't belong to user");
+//        }
+//
+//        TransactionResponse response = transactionService.createTransaction(userId, request);
+//        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+//    }
+
     @PostMapping
     public ResponseEntity<TransactionResponse> createTransaction(
-            @RequestHeader("Authorization") String token,
-            @Valid @RequestBody TransactionCreateRequest request) {
-
-        Long userId = getUserIdFromToken(token);
-
-        // Проверка принадлежности счета пользователю
-        if (!accountService.isAccountBelongsToUser(request.getAccountId(), userId)) {
-            throw new AccessDeniedException("Account doesn't belong to user");
-        }
-
-        TransactionResponse response = transactionService.createTransaction(userId, request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+            @AuthenticationPrincipal UserPrincipal userPrincipal,
+            @RequestBody TransactionServiceRequest request) {
+        TransactionResponse response = transactionService.createTransaction(
+                userPrincipal.getId(),
+                request
+        );
+        return ResponseEntity.ok(response);
     }
+
 
     @PutMapping("/{id}")
     public ResponseEntity<TransactionResponse> updateTransaction(
@@ -109,7 +117,7 @@ public class TransactionController {
             @RequestHeader("Authorization") String token,
             @RequestParam(required = false) String type,
             @RequestParam(required = false) String category,
-            @RequestParam(required = false, name = "paymentMethod") String paymentMethod,
+            @RequestParam(required = false, name = "accountId") Long accountId,
             @RequestParam(required = false) Double amountMin,
             @RequestParam(required = false) Double amountMax,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateStart,
@@ -119,8 +127,6 @@ public class TransactionController {
 
         TransactionType transactionType = parseEnum(type, TransactionType.class);
         TransactionCategory transactionCategory = parseEnum(category, TransactionCategory.class);
-        PaymentMethod paymentMethodEnum = parseEnum(paymentMethod, PaymentMethod.class);
-
         BigDecimal amountMinValue = amountMin != null ? BigDecimal.valueOf(amountMin) : null;
         BigDecimal amountMaxValue = amountMax != null ? BigDecimal.valueOf(amountMax) : null;
 
@@ -128,7 +134,7 @@ public class TransactionController {
                 userId,
                 transactionType,
                 transactionCategory,
-                paymentMethodEnum,
+                accountId,
                 amountMinValue,
                 amountMaxValue,
                 dateStart,

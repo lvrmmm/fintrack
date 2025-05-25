@@ -7,10 +7,8 @@ public enum PaymentMethod {
     // Банковские карты
     DEBIT_CARD("Дебетовая карта"),
     CREDIT_CARD("Кредитная карта"),
-    PREPAID_CARD("Предоплаченная карта"),
 
     // Банковские счета
-    CURRENT_ACCOUNT("Текущий счет"),
     SAVINGS_ACCOUNT("Сберегательный счет"),
 
     // Электронные кошельки

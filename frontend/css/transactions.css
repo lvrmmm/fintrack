@@ -1,7 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@600;700&display=swap");
 
 :root {
-  /* Colors */
   --primary: #2041ff;
   --primary-hover: #1a35e0;
   --secondary: #a0c4da;
@@ -12,30 +11,24 @@
   --light-bg: #f8f9fa;
   --gray: #7f8c8d;
 
-  /* Status colors */
   --success: #2ecc71;
   --danger: #e74c3c;
   --warning: #f39c12;
 
-  /* Spacing & Effects */
   --border-radius: 12px;
   --box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
   --transition: all 0.3s ease;
 }
 
-/* =============== */
-/* GLOBAL SETTINGS */
-/* =============== */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
   font-family: "Inter", Tahoma, Geneva, Verdana, sans-serif;
+
 }
 
-/* ================= */
-/* LAYOUT STRUCTURE */
-/* ================= */
+
 .main-content.transactions-page {
   background: var(--light-bg);
   padding: 30px;
@@ -44,6 +37,7 @@
   min-height: calc(100vh - 80px);
   display: flex;
   flex-direction: column;
+  padding-top: 100px;
   gap: 24px;
 }
 
@@ -169,7 +163,7 @@
   border-radius: var(--border-radius);
   padding: 24px;
   box-shadow: var(--box-shadow);
-  height: 350px;
+  height: 400px;
   display: flex;
   flex-direction: column;
 }
@@ -751,6 +745,37 @@
   margin: 0;
 }
 
+.no-data-chart, .error-chart {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #777;
+  text-align: center;
+}
+
+.no-data-chart i, .error-chart i {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  color: #ccc;
+}
+
+.error-chart i {
+  color: #e74c3c;
+}
+
+/* transactions.css */
+#transaction-account option[data-has-account="true"] {
+    font-weight: bold;
+    color: #333;
+}
+
+#transaction-account option[data-has-account="false"] {
+    color: #666;
+    font-style: italic;
+}
+
 /* Стили для модальных окон */
 .modal {
   display: none;
@@ -882,6 +907,7 @@
   .main-content.transactions-page {
     width: calc(100% - 200px);
     margin-left: 200px;
+    margin-top: 60px;
   }
 }
 
@@ -900,6 +926,7 @@
 @media (max-width: 768px) {
   .main-content.transactions-page {
     padding: 20px;
+    padding-top: 90px;
   }
 
   .filters-grid {
@@ -915,6 +942,7 @@
 @media (max-width: 576px) {
   .main-content.transactions-page {
     padding: 16px;
+    padding-top: 90px;
   }
 
   .modal-actions {

@@ -15,9 +15,11 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class AccountDto {
     private Long id;
-    private String name;
     private BigDecimal balance;
-    private String currency;
     private PaymentMethod paymentMethod;
     private LocalDate createdAt;
+
+    public String getDisplayName() {
+        return paymentMethod.getDisplayName();
+    }
 }

@@ -11,26 +11,31 @@ import java.time.LocalDate;
 
 @Data
 @Entity
-@Table(name = "accounts")
+@Table(name = "account_balance_history")
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Account {
+public class AccountBalanceHistory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne
+    @JoinColumn(name = "account_id", nullable = false)
+    private Account account;
+
     @Column(nullable = false)
     private BigDecimal balance;
 
+    @Column(nullable = false)
+    private BigDecimal balanceChange;
+
+    @Column(nullable = false)
+    private LocalDate date;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private PaymentMethod paymentMethod;
+    private BalanceChangeType changeType;
 
-    @Column(nullable = false)
-    private LocalDate createdAt;
-
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    private String description;
 }

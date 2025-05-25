@@ -72,20 +72,6 @@
         <h1 id="greeting-text">Загрузка...</h1>
       </div>
       <div class="header-right">
-        <div class="notifications">
-          <i class="bx bx-bell"></i>
-          <span class="notification-badge">3</span>
-          <div class="notifications-dropdown">
-            <div class="notification-item">
-              <i class="bx bx-wallet"></i>
-              <p>Бюджет на продукты почти исчерпан</p>
-            </div>
-            <div class="notification-item">
-              <i class="bx bx-check-circle"></i>
-              <p>Цель "Новый телефон" выполнена на 75%</p>
-            </div>
-          </div>
-        </div>
         <div class="profile">
           <a href="/frontend/profile.html">
             <img src="/frontend/images/avatar.jpg" alt="Профиль"
@@ -152,65 +138,33 @@
 
         <!-- Предстоящие платежи -->
         <div class="payments-card">
-          <div class="card-header">
-            <h2>Предстоящие платежи</h2>
-            <a href="/frontend/calendar.html" class="more-link">Больше</a>
-          </div>
-          <div class="payments-list">
-            <div class="payment-item">
-              <div class="payment-date">15.04</div>
-              <div class="payment-info">
-                <h3>Аренда квартиры</h3>
-                <p>Ежемесячный платеж</p>
-              </div>
-              <div class="payment-amount">-25,000 ₽</div>
-            </div>
-            <div class="payment-item">
-              <div class="payment-date">20.04</div>
-              <div class="payment-info">
-                <h3>Интернет</h3>
-                <p>Оплата за апрель</p>
-              </div>
-              <div class="payment-amount">-1,200 ₽</div>
-            </div>
-          </div>
-        </div>
+  <div class="card-header">
+    <h2>Предстоящие платежи</h2>
+    <a href="/frontend/calendar.html" class="more-link">Больше</a>
+  </div>
+  <div class="upcoming-payments">
+    <!-- Сюда будет вставлен контент через JavaScript -->
+    <div class="no-data-message">
+      <i class="bx bx-time"></i>
+      <p>Загрузка платежей...</p>
+    </div>
+  </div>
+</div>
 
         <!-- Последние транзакции -->
         <div class="recent-transactions-card">
-          <div class="card-header">
-            <h2>Последние транзакции</h2>
-            <a href="/frontend/transactions.html" class="more-link">Больше</a>
-          </div>
-          <div class="transactions-list">
-            <div class="transaction-item">
-              <div class="transaction-icon">
-                <i class="bx bx-shopping-bag"></i>
-              </div>
-              <div class="transaction-details">
-                <div class="transaction-header">
-                  <h3>Продукты</h3>
-                  <span class="transaction-amount expense">-3,450 ₽</span>
-                </div>
-                <p>Супермаркет "Пятерочка"</p>
-                <span class="transaction-date">12.04.2023</span>
-              </div>
-            </div>
-            <div class="transaction-item">
-              <div class="transaction-icon">
-                <i class="bx bx-credit-card"></i>
-              </div>
-              <div class="transaction-details">
-                <div class="transaction-header">
-                  <h3>Зарплата</h3>
-                  <span class="transaction-amount income">+85,000 ₽</span>
-                </div>
-                <p>Апрельская зарплата</p>
-                <span class="transaction-date">10.04.2023</span>
-              </div>
-            </div>
-          </div>
-        </div>
+  <div class="card-header">
+    <h2>Последние транзакции</h2>
+    <a href="/frontend/transactions.html" class="more-link">Больше</a>
+  </div>
+  <div class="recent-transactions">
+    <!-- Сюда будет вставлен контент через JavaScript -->
+    <div class="no-data-message">
+      <i class="bx bx-loader"></i>
+      <p>Загрузка транзакций...</p>
+    </div>
+  </div>
+</div>
       </div>
 
       <!-- Колонка 3 -->
@@ -249,9 +203,8 @@
         <!-- Прогресс за месяц -->
         <div class="monthly-card">
           <div class="card-header">
-            <h2>Прогресс за месяц</h2>
+            <h2>Расходы за месяц</h2>
             <div class="header-actions">
-              <i class="bx bx-download download-btn" title="Экспорт данных"></i>
               <a href="/frontend/budget.html" class="more-link">Больше</a>
             </div>
           </div>
