@@ -1,5 +1,4 @@
 document.addEventListener("DOMContentLoaded", function () {
-  // Инициализация данных
   const transactions = [];
   const accounts = [];
   const tbody = document.getElementById("transactions-body");
@@ -24,14 +23,12 @@ document.addEventListener("DOMContentLoaded", function () {
   let currentEditingId = null;
   let balanceChart = null;
 
-  // Валюта
   const currencies = [
     { code: "RUB", symbol: "₽", rate: 1 },
     { code: "USD", symbol: "$", rate: 0.011 },
     { code: "EUR", symbol: "€", rate: 0.01 },
   ];
 
-  // Инициализация дат фильтра
   const today = new Date();
   const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
   const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
@@ -39,7 +36,6 @@ document.addEventListener("DOMContentLoaded", function () {
   dateStart.valueAsDate = firstDayOfMonth;
   dateEnd.valueAsDate = lastDayOfMonth;
 
-  // Инициализация приложения
   init();
 
   async function init() {
@@ -217,7 +213,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
       const transactions = await response.json();
       
-      // Создаем массив всех дней месяца
       const daysInMonth = lastDay.getDate();
       const allDates = Array.from({length: daysInMonth}, (_, i) => {
         const date = new Date(today.getFullYear(), today.getMonth(), i + 1);
@@ -245,18 +240,16 @@ document.addEventListener("DOMContentLoaded", function () {
       // Группируем транзакции по датам
       const transactionsByDate = {};
       transactions.forEach(transaction => {
-        const date = transaction.date; // Используем дату транзакции, а не дату записи
+        const date = transaction.date; 
         if (!transactionsByDate[date]) {
           transactionsByDate[date] = [];
         }
         transactionsByDate[date].push(transaction);
       });
 
-      // Рассчитываем баланс для каждого дня
       let currentBalance = initialBalance;
       const dailyBalances = allDates.map(date => {
         if (transactionsByDate[date]) {
-          // Суммируем все транзакции за этот день
           const dayChange = transactionsByDate[date].reduce((sum, t) => {
             return sum + (t.type === "INCOME" ? t.amount : -t.amount);
           }, 0);
@@ -356,7 +349,6 @@ document.addEventListener("DOMContentLoaded", function () {
         });
       }
       
-      // Обновляем текущий баланс в плашке
       await updateTotalBalance();
       
     } catch (error) {
@@ -443,12 +435,10 @@ document.addEventListener("DOMContentLoaded", function () {
     event.preventDefault();
     const form = event.target;
     
-    // Получаем выбранный счет
     const accountSelect = document.getElementById("transaction-account");
     const selectedOption = accountSelect.options[accountSelect.selectedIndex];
     const isNewAccount = selectedOption.dataset.hasAccount === "false";
     
-    // Подготавливаем данные для отправки
     const transactionData = {
       date: form.date.value,
       category: form.category.value,
@@ -457,18 +447,17 @@ document.addEventListener("DOMContentLoaded", function () {
       description: form.description.value || null
     };
 
-    // Добавляем информацию о счете
     if (isNewAccount) {
-      transactionData.paymentMethod = form.accountId.value; // Отправляем метод оплаты для нового счета
+      transactionData.paymentMethod = form.accountId.value; 
     } else {
-      transactionData.accountId = form.accountId.value; // Отправляем ID существующего счета
+      transactionData.accountId = form.accountId.value; 
     }
 
     try {
       let response;
       
       if (currentEditingId) {
-        // Редактирование существующей транзакции
+      
         response = await fetch(`http://localhost:8080/api/transactions/${currentEditingId}`, {
           method: "PUT",
           headers: {
@@ -478,7 +467,6 @@ document.addEventListener("DOMContentLoaded", function () {
           body: JSON.stringify(transactionData),
         });
       } else {
-        // Создание новой транзакции
         response = await fetch("http://localhost:8080/api/transactions", {
           method: "POST",
           headers: {
@@ -494,7 +482,7 @@ document.addEventListener("DOMContentLoaded", function () {
         throw new Error(errorData.message || "Ошибка сохранения");
       }
 
-      // Обновляем данные
+      
       await Promise.all([
         loadAccounts(),
         loadTransactions()
@@ -783,7 +771,6 @@ document.addEventListener("DOMContentLoaded", function () {
     form.date.value = transaction.date.split('T')[0];
     form.category.value = transaction.category;
     
-    // Устанавливаем правильное значение счёта
     const accountSelect = form.accountId;
     for (let i = 0; i < accountSelect.options.length; i++) {
       const option = accountSelect.options[i];

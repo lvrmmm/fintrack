@@ -39,7 +39,6 @@ document.addEventListener("DOMContentLoaded", async function () {
   // Получаем реальные данные
   async function getRealData() {
     try {
-      // 1. Получаем историю баланса
       const today = new Date();
       const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
       const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
@@ -49,19 +48,16 @@ document.addEventListener("DOMContentLoaded", async function () {
         endDate: formatDate(lastDayOfMonth)
       });
       
-      // 2. Получаем транзакции за текущий месяц
+      
       const transactions = await fetchData("/api/transactions", {
         startDate: formatDate(firstDayOfMonth),
         endDate: formatDate(lastDayOfMonth)
       });
       
-      // 3. Анализируем категории расходов
       const expenseCategories = analyzeExpenseCategories(transactions);
       
-      // 4. Получаем доходы и расходы
       const incomeExpense = calculateIncomeExpense(transactions);
       
-      // Форматируем данные для графиков
       return {
         balanceTrend: await formatBalanceTrend(balanceHistory),
         incomeExpense,
@@ -74,7 +70,6 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
   }
 
-  // Форматирование даты для API (YYYY-MM-DD)
   function formatDate(date) {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -82,7 +77,6 @@ document.addEventListener("DOMContentLoaded", async function () {
     return `${year}-${month}-${day}`;
   }
 
-  // Анализ категорий расходов
   function analyzeExpenseCategories(transactions) {
     const categoriesMap = {};
     
@@ -104,7 +98,6 @@ document.addEventListener("DOMContentLoaded", async function () {
       .sort((a, b) => b.amount - a.amount);
   }
 
-  // Расчет доходов и расходов
   function calculateIncomeExpense(transactions) {
     let income = 0;
     let expenses = 0;
@@ -133,13 +126,11 @@ document.addEventListener("DOMContentLoaded", async function () {
     };
   }
 
-  // Форматирование данных для графика баланса
   async function formatBalanceTrend() {
   try {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    // 1. Получаем начальный баланс (на конец предыдущего месяца)
     const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
     const initialBalanceResponse = await fetchData("/api/accounts/total-balance-history", {
       endDate: formatDate(new Date(firstDayOfMonth.getTime() - 1)),
@@ -148,19 +139,16 @@ document.addEventListener("DOMContentLoaded", async function () {
     
     let initialBalance = initialBalanceResponse?.[0]?.balance || 0;
 
-    // 2. Получаем все транзакции за текущий месяц
     const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
     const transactions = await fetchData("/api/transactions", {
       startDate: formatDate(firstDayOfMonth),
       endDate: formatDate(lastDayOfMonth)
     });
 
-    // 3. Рассчитываем дневные балансы для месяца
     const daysInMonth = lastDayOfMonth.getDate();
     const dailyBalances = [];
     const transactionsByDate = {};
 
-    // Группируем транзакции по датам
     transactions.forEach(t => {
       const date = t.date.split('T')[0];
       if (!transactionsByDate[date]) {
@@ -169,7 +157,6 @@ document.addEventListener("DOMContentLoaded", async function () {
       transactionsByDate[date].push(t);
     });
 
-    // Рассчитываем баланс для каждого дня месяца
     let currentBalance = initialBalance;
     for (let day = 1; day <= daysInMonth; day++) {
       const date = new Date(today.getFullYear(), today.getMonth(), day);
@@ -189,24 +176,20 @@ document.addEventListener("DOMContentLoaded", async function () {
       });
     }
 
-    // 4. Формируем недельный график (текущая неделя с понедельника по воскресенье)
     const weeklyData = [];
     const weekdays = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
     
-    // Находим понедельник текущей недели
-    const currentDayOfWeek = today.getDay(); // 0-6 (вс-сб)
+    const currentDayOfWeek = today.getDay(); 
     const monday = new Date(today);
     monday.setDate(today.getDate() - (currentDayOfWeek === 0 ? 6 : currentDayOfWeek - 1));
     monday.setHours(0, 0, 0, 0);
 
-    // Получаем баланс на начало недели (воскресенье предыдущей недели)
     const weekStartBalanceResponse = await fetchData("/api/accounts/total-balance-history", {
       endDate: formatDate(new Date(monday.getTime() - 1)),
       limit: 1
     });
     let weekBalance = weekStartBalanceResponse?.[0]?.balance || initialBalance;
 
-    // Получаем транзакции за текущую неделю
     const sunday = new Date(monday);
     sunday.setDate(monday.getDate() + 6);
     const weekTransactions = await fetchData("/api/transactions", {
@@ -214,12 +197,11 @@ document.addEventListener("DOMContentLoaded", async function () {
       endDate: formatDate(sunday)
     });
 
-    // Группируем транзакции по дням недели
     const weekTransactionsByDay = {};
     weekTransactions.forEach(t => {
       const date = new Date(t.date);
-      const dayOfWeek = date.getDay(); // 0-6 (вс-сб)
-      const weekdayIndex = dayOfWeek === 0 ? 6 : dayOfWeek - 1; // Преобразуем в пн-вс
+      const dayOfWeek = date.getDay(); 
+      const weekdayIndex = dayOfWeek === 0 ? 6 : dayOfWeek - 1; 
       
       if (!weekTransactionsByDay[weekdayIndex]) {
         weekTransactionsByDay[weekdayIndex] = [];
@@ -227,7 +209,6 @@ document.addEventListener("DOMContentLoaded", async function () {
       weekTransactionsByDay[weekdayIndex].push(t);
     });
 
-    // Рассчитываем баланс для каждого дня недели
     for (let i = 0; i < 7; i++) {
       const currentDate = new Date(monday);
       currentDate.setDate(monday.getDate() + i);
@@ -246,15 +227,13 @@ document.addEventListener("DOMContentLoaded", async function () {
       });
     }
 
-    // 5. Формируем годовой график (с января по текущий месяц)
     const yearlyData = [];
     const currentYear = today.getFullYear();
-    const currentMonth = today.getMonth(); // Текущий месяц (0-11)
+    const currentMonth = today.getMonth(); 
 
-    // Получаем начальный баланс на 1 января текущего года
     const januaryFirst = new Date(currentYear, 0, 1);
     const initialYearBalanceResponse = await fetchData("/api/accounts/total-balance-history", {
-      endDate: formatDate(new Date(januaryFirst.getTime() - 1)), // Баланс на 31 декабря прошлого года
+      endDate: formatDate(new Date(januaryFirst.getTime() - 1)), 
       limit: 1
     });
     let yearBalance = initialYearBalanceResponse?.[0]?.balance || 0;
@@ -265,7 +244,6 @@ document.addEventListener("DOMContentLoaded", async function () {
       endDate: formatDate(today)
     });
 
-    // Группируем транзакции по месяцам
     const transactionsByMonth = {};
     yearTransactions.forEach(t => {
       const date = new Date(t.date);
@@ -412,7 +390,6 @@ document.addEventListener("DOMContentLoaded", async function () {
     };
   }
 
-  // Вспомогательные функции
   function getCategoryName(category) {
     const names = {
       "GROCERIES": "Продукты",
@@ -499,7 +476,6 @@ document.addEventListener("DOMContentLoaded", async function () {
     };
   }
 
-  // Форматирование валюты
   function formatCurrency(value, currency = "RUB") {
     const formatter = new Intl.NumberFormat("ru-RU", {
       style: "decimal",
@@ -519,12 +495,10 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
   }
 
-  // Основная функция инициализации
   async function initialize() {
     try {
       const statsData = await getRealData();
       
-      // Инициализация графиков
       if (document.getElementById("balanceTrendChart")) {
         initBalanceTrendChart(statsData);
       }
@@ -548,7 +522,6 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
   }
 
-  // Функции инициализации графиков
   function initBalanceTrendChart(data) {
 
     const canvas = document.getElementById("balanceTrendChart");
@@ -667,7 +640,6 @@ document.addEventListener("DOMContentLoaded", async function () {
           loadDetailsData(targetId, data);
           card.dataset.loaded = "true";
           
-          // Пересчитываем размеры графиков после загрузки данных
           setTimeout(() => {
             if (window.myCharts && window.myCharts[targetId]) {
               window.myCharts[targetId].resize();
@@ -675,19 +647,16 @@ document.addEventListener("DOMContentLoaded", async function () {
           }, 300);
         }
         
-        // Обновляем иконку и текст
         const icon = this.querySelector("i");
         if (card.classList.contains("active")) {
           icon.style.transform = "rotate(90deg)";
           this.querySelector("span").textContent = "Скрыть";
-          // Увеличиваем высоту карточки
           card.style.transition = "height 0.3s ease";
         } else {
           icon.style.transform = "rotate(0deg)";
           this.querySelector("span").textContent = "Детали";
         }
         
-        // Обновляем размеры графиков
         if (chartContainer && chartContainer.chart) {
           setTimeout(() => {
             chartContainer.chart.resize();
@@ -699,18 +668,29 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   function loadDetailsData(targetId, data) {
     if (targetId === "monthComparisonDetails") {
-      const tbody = document.querySelector(`#${targetId} tbody`);
-      tbody.innerHTML = data.monthsComparison.labels
-        .map((label, i) => `
+    const tbody = document.querySelector(`#${targetId} tbody`);
+    tbody.innerHTML = data.monthsComparison.labels
+      .map((label, i) => {
+        const current = data.monthsComparison.current[i];
+        const previous = data.monthsComparison.previous[i];
+        const difference = current - previous;
+        const isHigher = current > previous;
+        
+        return `
           <tr>
             <td>${label}</td>
-            <td>${formatCurrency(data.monthsComparison.current[i])}</td>
-            <td>${formatCurrency(data.monthsComparison.previous[i])}</td>
-            <td class="${data.monthsComparison.current[i] >= data.monthsComparison.previous[i] ? "positive" : "negative"}">
-              ${formatCurrency(Math.abs(data.monthsComparison.current[i] - data.monthsComparison.previous[i]))}
+            <td class="current-month ${isHigher ? 'higher' : 'lower'}">
+              ${formatCurrency(current)}
+            </td>
+            <td class="previous-month">
+              ${formatCurrency(previous)}
+            </td>
+            <td class="difference-cell ${difference >= 0 ? 'positive' : 'negative'}">
+              ${formatCurrency(Math.abs(difference))}
             </td>
           </tr>
-        `).join("");
+        `;
+      }).join("");
     } else if (targetId === "categoriesDetails") {
       const container = document.querySelector(`#${targetId} .categories-list`);
       container.innerHTML = data.categories
@@ -749,7 +729,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   async function calculateFinancialHealth(data) {
     try {
-      // 1. Получаем доходы и расходы за последние 3 месяца для более точной оценки
       const today = new Date();
       const threeMonthsAgo = new Date(today.getFullYear(), today.getMonth() - 3, 1);
       
@@ -758,10 +737,8 @@ document.addEventListener("DOMContentLoaded", async function () {
         endDate: formatDate(today)
       });
       
-      // 2. Рассчитываем среднемесячные показатели
       const monthlyData = {};
       
-      // Группируем по месяцам
       transactions.forEach(t => {
         const date = new Date(t.date);
         const monthKey = `${date.getFullYear()}-${date.getMonth()}`;
@@ -777,12 +754,11 @@ document.addEventListener("DOMContentLoaded", async function () {
         }
       });
       
-      // Рассчитываем сбережения (разница между доходами и расходами)
+      // Рассчитываем  (разница между доходами и расходами)
       Object.keys(monthlyData).forEach(month => {
         monthlyData[month].savings = monthlyData[month].income - monthlyData[month].expenses;
       });
       
-      // 3. Рассчитываем показатели здоровья
       const monthsCount = Object.keys(monthlyData).length;
       const avgIncome = Object.values(monthlyData).reduce((sum, m) => sum + m.income, 0) / monthsCount;
       const avgExpenses = Object.values(monthlyData).reduce((sum, m) => sum + m.expenses, 0) / monthsCount;
@@ -791,9 +767,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       // Показатель сбережений (0-100%)
       const savingsRate = Math.min(100, Math.max(0, Math.round((avgSavings / avgIncome) * 100)));
       
-      // Показатель соотношения расходов к доходам (чем меньше, тем лучше)
       const expenseRatio = Math.min(100, Math.max(0, Math.round((avgExpenses / avgIncome) * 100)));
-      // Инвертируем для отображения (чем больше %, тем лучше)
       const expenseHealth = 100 - expenseRatio;
       
       return {
@@ -815,13 +789,11 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
   }
 
-  // Обновляем функцию initialize()
   async function initialize() {
     try {
       const statsData = await getRealData();
       const healthData = await calculateFinancialHealth(statsData);
       
-      // Инициализация графиков
       if (document.getElementById("balanceTrendChart")) {
         initBalanceTrendChart(statsData);
       }
@@ -839,7 +811,6 @@ document.addEventListener("DOMContentLoaded", async function () {
         initMonthComparisonChart(statsData);
       }
       
-      // Обновляем показатели финансового здоровья
       updateFinancialHealth(healthData);
       
       initDetailsButtons(statsData);
@@ -858,9 +829,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
   }
 
-  // Добавляем эту функцию для обновления UI
   function updateFinancialHealth(data) {
-    // Обновляем круговые прогрессы
     document.querySelectorAll('.circular-progress').forEach(progress => {
       const value = progress.dataset.value;
       const path = progress.querySelector('.progress-bar');
@@ -873,7 +842,6 @@ document.addEventListener("DOMContentLoaded", async function () {
       }
     });
 
-    // Обновляем текстовую информацию
     const savingsMetric = document.querySelector('.metric-item:nth-child(1) .metric-info');
     if (savingsMetric) {
       savingsMetric.querySelector('h3').textContent = 'Сбережения';
@@ -881,7 +849,6 @@ document.addEventListener("DOMContentLoaded", async function () {
         `Откладываете ${Math.round(data.avgSavings/data.avgIncome*100)}% от доходов`;
       savingsMetric.querySelector('.range-fill').style.width = `${data.savingsRate}%`;
       
-      // Обновляем значение в data-атрибуте для анимации
       const savingsProgress = document.querySelector('.metric-item:nth-child(1) .circular-progress');
       if (savingsProgress) {
         savingsProgress.dataset.value = data.savingsRate;
@@ -897,7 +864,6 @@ document.addEventListener("DOMContentLoaded", async function () {
         `Расходы составляют ${Math.round(data.avgExpenses/data.avgIncome*100)}% от доходов`;
       expenseMetric.querySelector('.range-fill').style.width = `${data.expenseHealth}%`;
       
-      // Обновляем значение в data-атрибуте для анимации
       const expenseProgress = document.querySelector('.metric-item:nth-child(2) .circular-progress');
       if (expenseProgress) {
         expenseProgress.dataset.value = data.expenseHealth;

@@ -19,15 +19,13 @@ document.addEventListener("DOMContentLoaded", function () {
   let currentMonth = currentDate.getMonth();
   let currentYear = currentDate.getFullYear();
   const authToken = localStorage.getItem("token");
-  let allEvents = []; // Все загруженные события
+  let allEvents = []; 
 
-  // Проверка аутентификации
   if (!authToken) {
     window.location.href = "/frontend/sign-in.html";
     return;
   }
 
-  // Инициализация
   renderCalendar();
   loadEvents();
 
@@ -59,8 +57,8 @@ document.addEventListener("DOMContentLoaded", function () {
   // Функция загрузки событий с сервера
   async function loadEvents() {
     try {
-      const startDate = new Date(currentYear, currentMonth, 1); // Первый день текущего месяца
-      const endDate = new Date(currentYear, currentMonth + 1, 0); // Последний день текущего месяца
+      const startDate = new Date(currentYear, currentMonth, 1); 
+      const endDate = new Date(currentYear, currentMonth + 1, 0); 
 
       const response = await fetchWithAuth(
         `${apiBaseUrl}/api/calendar?startDate=${formatDate(
@@ -88,7 +86,6 @@ document.addEventListener("DOMContentLoaded", function () {
       currentMonth
     ).toLocaleDateString("ru-RU", { month: "long", year: "numeric" });
 
-    // Очистка и создание заголовков дней недели
     calendarGrid.innerHTML = "";
     ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"].forEach((day) => {
       const dayHeader = document.createElement("div");
@@ -150,12 +147,10 @@ document.addEventListener("DOMContentLoaded", function () {
         )}`;
         eventElement.style.backgroundColor = event.color || "#3498db";
         
-        // Добавлена проверка на null для заголовка события
         eventElement.textContent = event.title ?? "Финансовое событие";
         
         eventElement.dataset.id = event.id;
         
-        // Добавлена проверка на null для title атрибута
         eventElement.title = `${event.title ?? "Финансовое событие"} (${formatDate(
           new Date(event.date)
         )})`;
@@ -234,7 +229,6 @@ document.addEventListener("DOMContentLoaded", function () {
       month: "long",
     });
 
-    // Добавлены проверки на null для title и amount
     eventElement.innerHTML = `
     <span class="event-date"><i class="bx bx-calendar"></i> ${dateStr}</span>
     <span class="event-title">${event.title ?? "Финансовове событие (название не указано)"}</span>
@@ -249,7 +243,6 @@ document.addEventListener("DOMContentLoaded", function () {
     return eventElement;
   }
 
-  // Открытие модального окна для добавления события
   function openEventModal() {
     document.getElementById("modal-title").textContent = "Добавить событие";
     eventForm.reset();
@@ -257,12 +250,10 @@ document.addEventListener("DOMContentLoaded", function () {
     eventModal.classList.add("active");
   }
 
-  // Закрытие модального окна
   function closeModal() {
     eventModal.classList.remove("active");
   }
 
-  // Обработка формы
   async function handleFormSubmit(e) {
     e.preventDefault();
 
@@ -299,7 +290,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  // Просмотр деталей события
   async function showEventDetails(event) {
     try {
       let details;
@@ -317,7 +307,6 @@ document.addEventListener("DOMContentLoaded", function () {
         details = await response.json();
         renderGoalDetails(details);
       } else {
-        // Для пользовательских событий
         details = event;
         renderUserEventDetails(details);
       }
@@ -554,13 +543,10 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  // Вспомогательные функции
   function getEventsForDay(date) {
-    // Приводим дату к формату YYYY-MM-DD без учета времени
     const dateStr = formatDate(date);
 
     return allEvents.filter((event) => {
-      // Приводим дату события к локальной дате без времени
       const eventDate = new Date(event.date);
       const eventDateStr = formatDate(eventDate);
 

@@ -62,13 +62,18 @@ document.addEventListener("DOMContentLoaded", async function () {
       const weekAgo = new Date(today);
       weekAgo.setDate(today.getDate() - 7);
       
+      // Получаем все транзакции за неделю и сортируем по дате (новые сначала)
       const transactions = await fetchData(
-        `/transactions?startDate=${formatDateForAPI(weekAgo)}&endDate=${formatDateForAPI(today)}&limit=3` // Ограничиваем до 3 транзакций
+        `/transactions?startDate=${formatDateForAPI(weekAgo)}&endDate=${formatDateForAPI(today)}`
       );
+      
+      const recentTransactions = transactions
+        .sort((a, b) => new Date(b.date) - new Date(a.date))
+        .slice(0, 3);
       
       const container = document.querySelector('.recent-transactions');
       
-      if (transactions.length === 0) {
+      if (recentTransactions.length === 0) {
         container.innerHTML = `
           <div class="no-data-message">
             <i class="bx bx-time"></i>
@@ -78,7 +83,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         return;
       }
       
-      container.innerHTML = transactions.map(transaction => `
+      container.innerHTML = recentTransactions.map(transaction => `
         <div class="transaction-item" data-original-amount="${transaction.amount}">
           <div class="transaction-icon ${transaction.type.toLowerCase()}">
             <i class="bx ${transaction.type === 'INCOME' ? 'bx-trending-up' : 'bx-trending-down'}"></i>
@@ -105,6 +110,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       `;
     }
   }
+
 
   async function initUpcomingPayments() {
     try {
@@ -180,7 +186,6 @@ document.addEventListener("DOMContentLoaded", async function () {
     return icons[category] || 'bx bx-money';
   }
 
-  // Форматирование даты для API (YYYY-MM-DD)
   function formatDateForAPI(date) {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -188,7 +193,6 @@ document.addEventListener("DOMContentLoaded", async function () {
     return `${year}-${month}-${day}`;
   }
 
-  // Форматирование валюты
   function formatCurrency(value, currency = "RUB") {
     const formatter = new Intl.NumberFormat("ru-RU", {
       style: "decimal",
@@ -243,7 +247,7 @@ document.addEventListener("DOMContentLoaded", async function () {
           target: goal.targetAmount
         })),
         motivators: getMotivationalMessages(balance.totalBalance, goals),
-        rawTransactions: transactions.slice(0, 3) // Сохраняем сырые данные транзакций
+        rawTransactions: transactions.slice(0, 3) 
       };
     } catch (error) {
       console.error("Ошибка загрузки данных:", error);
@@ -380,7 +384,6 @@ document.addEventListener("DOMContentLoaded", async function () {
   function formatMonthlyStatsData(categories) {
     const topCategories = categories.slice(0, 5);
     
-    // Логарифмическое масштабирование для лучшего отображения
     const maxAmount = Math.max(...topCategories.map(c => c.amount));
     const minAmount = Math.min(...topCategories.map(c => c.amount));
     const scaleFactor = maxAmount > minAmount * 10 ? Math.log10(maxAmount / minAmount) : 1;
@@ -396,40 +399,60 @@ document.addEventListener("DOMContentLoaded", async function () {
   }
 
 
-  // Генерация мотивационных сообщений
   function getMotivationalMessages(balance, goals) {
     const messages = [];
     
-    // Сообщения о балансе
     if (balance > 0) {
-      messages.push("Ваш финансовый баланс положительный - это отличный результат!");
+        messages.push("Ваш финансовый баланс положительный - это отличный результат!");
     } else {
-      messages.push("Каждая копейка приближает вас к финансовой стабильности!");
+        messages.push("Каждая копейка приближает вас к финансовой стабильности!");
     }
     
-    // Сообщения о целях
-    if (goals.length > 0) {
-      const completedGoals = goals.filter(g => g.current >= g.target).length;
-      if (completedGoals > 0) {
-        messages.push(`Вы уже достигли ${completedGoals} целей! Продолжайте в том же духе!`);
-      } else {
-        const closestGoal = goals.reduce((prev, curr) => 
-          (curr.current / curr.target) > (prev.current / prev.target) ? curr : prev
-        );
-        const progress = Math.round((closestGoal.current / closestGoal.target) * 100);
-        messages.push(`Вы уже на ${progress}% к цели "${closestGoal.title}"!`);
-      }
+    if (goals && goals.length > 0) {
+        const validGoals = goals.filter(g => g && g.target > 0);
+        
+        if (validGoals.length > 0) {
+            const completedGoals = validGoals.filter(g => g.current >= g.target).length;
+            
+            if (completedGoals > 0) {
+                messages.push(`Вы уже достигли ${completedGoals} ${getGoalWordForm(completedGoals)}! Продолжайте в том же духе!`);
+            } else {
+                const closestGoal = validGoals.reduce((prev, curr) => 
+                    (curr.current / curr.target) > (prev.current / prev.target) ? curr : prev
+                );
+                
+                if (closestGoal && closestGoal.title && closestGoal.target > 0) {
+                    const progress = Math.round((closestGoal.current / closestGoal.target) * 100);
+                    messages.push(`Вы уже на ${progress}% к цели "${closestGoal.title}"!`);
+                }
+            }
+        }
     }
     
-    // Общие мотивационные сообщения
     messages.push(
-      "Маленькие шаги приводят к большим результатам.",
-      "Финансовая дисциплина - ключ к успеху!",
-      "Сегодняшние решения определяют завтрашние возможности."
+        "Маленькие шаги приводят к большим результатам.",
+        "Финансовая дисциплина - ключ к успеху!",
+        "Сегодняшние решения определяют завтрашние возможности."
     );
     
     return messages;
-  }
+}
+function getGoalWordForm(number) {
+    const lastDigit = number % 10;
+    const lastTwoDigits = number % 100;
+    
+    if (lastTwoDigits >= 11 && lastTwoDigits <= 19) {
+        return 'целей';
+    }
+    
+    switch (lastDigit) {
+        case 1: return 'цели';
+        case 2:
+        case 3:
+        case 4: return 'цели';
+        default: return 'целей';
+    }
+}
 
   // Получение демо-данных при ошибке
   function getFallbackData() {
@@ -553,7 +576,6 @@ document.addEventListener("DOMContentLoaded", async function () {
     return paymentMethods[paymentMethod] || paymentMethod;
   }
 
-  // Инициализация компонентов
   async function initDashboard() {
     try {
       const data = await loadDashboardData();
@@ -594,8 +616,8 @@ document.addEventListener("DOMContentLoaded", async function () {
   function initWeeklyProgressChart(data) {
     const ctx = document.getElementById("weeklyProgressChart").getContext("2d");
     if (window.weeklyChart && window.weeklyChart instanceof Chart) {
-    window.weeklyChart.destroy();
-  }
+      window.weeklyChart.destroy();
+    }
     
     window.weeklyChart = new Chart(ctx, {
       type: "line",
@@ -603,7 +625,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         labels: data.labels,
         datasets: [{
           label: "Общий баланс",
-          data: data.datasets[0].data.map(v => v * currentCurrency.rate),
+          data: data.datasets[0].data,
           borderColor: "#2041ff",
           backgroundColor: "rgba(32, 65, 255, 0.1)",
           tension: 0.4,
@@ -618,7 +640,9 @@ document.addEventListener("DOMContentLoaded", async function () {
           tooltip: {
             callbacks: {
               label: function(context) {
-                return `${context.dataset.label}: ${context.raw.toLocaleString('ru-RU')} ${currentCurrency.symbol}`;
+                const value = context.raw;
+                const convertedValue = value * currentCurrency.rate;
+                return `${context.dataset.label}: ${convertedValue.toLocaleString('ru-RU')} ${currentCurrency.symbol}`;
               }
             }
           }
@@ -627,7 +651,8 @@ document.addEventListener("DOMContentLoaded", async function () {
           y: {
             ticks: {
               callback: function(value) {
-                return value.toLocaleString('ru-RU') + ' ' + currentCurrency.symbol;
+                const convertedValue = value * currentCurrency.rate;
+                return convertedValue.toLocaleString('ru-RU') + ' ' + currentCurrency.symbol;
               }
             }
           }
@@ -639,7 +664,6 @@ document.addEventListener("DOMContentLoaded", async function () {
   function initTransactionsChart(data) {
     const ctx = document.getElementById("transactionsChart").getContext("2d");
     
-    // Check if chart exists and is a Chart instance before destroying
     if (window.transactionsChart && window.transactionsChart instanceof Chart) {
       window.transactionsChart.destroy();
     }
@@ -651,13 +675,13 @@ document.addEventListener("DOMContentLoaded", async function () {
         datasets: [
           {
             label: "Доходы",
-            data: data.datasets[0].data.map(v => v * currentCurrency.rate),
+            data: data.datasets[0].data,
             backgroundColor: "#2ecc71",
             borderRadius: 4,
           },
           {
             label: "Расходы",
-            data: data.datasets[1].data.map(v => v * currentCurrency.rate),
+            data: data.datasets[1].data,
             backgroundColor: "#e74c3c",
             borderRadius: 4,
           }
@@ -671,7 +695,9 @@ document.addEventListener("DOMContentLoaded", async function () {
           tooltip: {
             callbacks: {
               label: function(context) {
-                return `${context.dataset.label}: ${context.raw.toLocaleString('ru-RU')} ${currentCurrency.symbol}`;
+                const value = context.raw;
+                const convertedValue = value * currentCurrency.rate;
+                return `${context.dataset.label}: ${convertedValue.toLocaleString('ru-RU')} ${currentCurrency.symbol}`;
               }
             }
           }
@@ -682,7 +708,8 @@ document.addEventListener("DOMContentLoaded", async function () {
             stacked: true,
             ticks: {
               callback: function(value) {
-                return value.toLocaleString('ru-RU') + ' ' + currentCurrency.symbol;
+                const convertedValue = value * currentCurrency.rate;
+                return convertedValue.toLocaleString('ru-RU') + ' ' + currentCurrency.symbol;
               }
             }
           }
@@ -691,19 +718,19 @@ document.addEventListener("DOMContentLoaded", async function () {
     });
   }
 
+
   function initMonthlyChart(data) {
     const ctx = document.getElementById("monthlyChart").getContext("2d");
     if (window.monthlyChart && window.monthlyChart instanceof Chart) {
-    window.monthlyChart.destroy();
-  }
+      window.monthlyChart.destroy();
+    }
     
-    // Используем обычную круговую диаграмму вместо полярной для лучшей читаемости
     window.monthlyChart = new Chart(ctx, {
       type: "doughnut",
       data: {
         labels: data.labels,
         datasets: [{
-          data: data.data.map(v => v * currentCurrency.rate),
+          data: data.data,
           backgroundColor: data.colors || [
             "#2041ff", "#2ecc71", "#e74c3c", "#f39c12", "#9b59b6"
           ],
@@ -729,9 +756,10 @@ document.addEventListener("DOMContentLoaded", async function () {
             callbacks: {
               label: function(context) {
                 const value = context.raw;
-                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                const convertedValue = value * currentCurrency.rate;
+                const total = context.dataset.data.reduce((a, b) => a + b, 0) * currentCurrency.rate;
                 const percentage = Math.round((value / total) * 100);
-                return `${context.label}: ${value.toLocaleString('ru-RU')} ${currentCurrency.symbol} (${percentage}%)`;
+                return `${context.label}: ${convertedValue.toLocaleString('ru-RU')} ${currentCurrency.symbol} (${percentage}%)`;
               }
             }
           }
@@ -763,10 +791,16 @@ document.addEventListener("DOMContentLoaded", async function () {
   }
 
   function initMotivation(motivators) {
+    const motivatorElement = document.getElementById("motivation-text");
+    
+    if (!motivators || motivators.length === 0) {
+        motivatorElement.textContent = "Финансовая дисциплина - ключ к успеху!";
+        return;
+    }
+    
     const motivator = motivators[Math.floor(Math.random() * motivators.length)];
-    document.getElementById("motivation-text").textContent = motivator;
-  }
-
+    motivatorElement.textContent = motivator;
+}
   function initCurrencyToggle() {
     const toggleBtn = document.getElementById("currency-toggle");
     const currencySymbol = document.getElementById("currency-symbol");
@@ -777,67 +811,65 @@ document.addEventListener("DOMContentLoaded", async function () {
     toggleBtn.addEventListener("click", function() {
       currentCurrency = currencies[(currencies.indexOf(currentCurrency) + 1) % currencies.length];
       
-      // Обновляем кнопку
       toggleBtn.textContent = currentCurrency.symbol;
       currencySymbol.textContent = currentCurrency.symbol;
 
-      // Обновляем баланс
       const originalTotal = parseFloat(totalElement.dataset.original);
       totalElement.textContent = formatCurrency(originalTotal, currentCurrency.code);
 
-      // Обновляем счета
       amountElements.forEach(el => {
         const original = parseFloat(el.dataset.original);
         el.textContent = formatCurrency(original, currentCurrency.code);
       });
 
-      // Обновляем транзакции и платежи
       transactionAmounts.forEach(el => {
         const original = parseFloat(el.closest('[data-original-amount]')?.dataset.originalAmount || "0");
         const isExpense = el.classList.contains('expense') || el.classList.contains('payment-amount');
         el.textContent = `${isExpense ? '-' : '+'}${formatCurrency(original, currentCurrency.code)}`;
       });
 
-      // Обновляем графики
       updateChartsWithCurrency();
     });
   }
 
   function updateChartsWithCurrency() {
-    // Обновляем график баланса
     if (window.weeklyChart) {
-      window.weeklyChart.data.datasets[0].data = window.weeklyChart.data.datasets[0].data.map(
-        v => v / currentCurrency.rate * currencies[0].rate * currentCurrency.rate
-      );
+      window.weeklyChart.options.plugins.tooltip.callbacks.label = function(context) {
+        const value = context.raw;
+        const convertedValue = value * currentCurrency.rate;
+        return `${context.dataset.label}: ${convertedValue.toLocaleString('ru-RU')} ${currentCurrency.symbol}`;
+      };
       window.weeklyChart.options.scales.y.ticks.callback = function(value) {
-        return value.toLocaleString('ru-RU') + ' ' + currentCurrency.symbol;
+        const convertedValue = value * currentCurrency.rate;
+        return convertedValue.toLocaleString('ru-RU') + ' ' + currentCurrency.symbol;
       };
       window.weeklyChart.update();
     }
 
-    // Обновляем график транзакций
     if (window.transactionsChart) {
-      window.transactionsChart.data.datasets[0].data = window.transactionsChart.data.datasets[0].data.map(
-        v => v / currentCurrency.rate * currencies[0].rate * currentCurrency.rate
-      );
-      window.transactionsChart.data.datasets[1].data = window.transactionsChart.data.datasets[1].data.map(
-        v => v / currentCurrency.rate * currencies[0].rate * currentCurrency.rate
-      );
+      window.transactionsChart.options.plugins.tooltip.callbacks.label = function(context) {
+        const value = context.raw;
+        const convertedValue = value * currentCurrency.rate;
+        return `${context.dataset.label}: ${convertedValue.toLocaleString('ru-RU')} ${currentCurrency.symbol}`;
+      };
       window.transactionsChart.options.scales.y.ticks.callback = function(value) {
-        return value.toLocaleString('ru-RU') + ' ' + currentCurrency.symbol;
+        const convertedValue = value * currentCurrency.rate;
+        return convertedValue.toLocaleString('ru-RU') + ' ' + currentCurrency.symbol;
       };
       window.transactionsChart.update();
     }
 
-    // Обновляем круговую диаграмму
     if (window.monthlyChart) {
-      window.monthlyChart.data.datasets[0].data = window.monthlyChart.data.datasets[0].data.map(
-        v => v / currentCurrency.rate * currencies[0].rate * currentCurrency.rate
-      );
+      window.monthlyChart.options.plugins.tooltip.callbacks.label = function(context) {
+        const value = context.raw;
+        const convertedValue = value * currentCurrency.rate;
+        const total = context.dataset.data.reduce((a, b) => a + b, 0) * currentCurrency.rate;
+        const percentage = Math.round((value / total) * 100);
+        return `${context.label}: ${convertedValue.toLocaleString('ru-RU')} ${currentCurrency.symbol} (${percentage}%)`;
+      };
       window.monthlyChart.update();
     }
   }
 
-  // Запускаем инициализацию дашборда
   initDashboard();
 });

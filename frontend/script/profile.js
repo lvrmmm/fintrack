@@ -1,7 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
-  const API_URL = "http://localhost:8080/api"; // адаптируй, если порт другой
+  const API_URL = "http://localhost:8080/api"; 
 
-  // DOM
   const saveBtn = document.getElementById("save-btn");
   const logoutBtn = document.getElementById("logout-btn");
   const changePasswordBtn = document.getElementById("change-password-btn");

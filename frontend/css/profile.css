@@ -1,5 +1,4 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@600;700&display=swap");
-/* Основные стили профиля */
 * {
   margin: 0;
   padding: 0;
@@ -32,7 +31,6 @@
   flex: 1;
 }
 
-/* Аватар */
 .avatar-upload {
   text-align: center;
   margin-bottom: 30px;
@@ -75,7 +73,6 @@
   background-color: #1a36d4;
 }
 
-/* Форма */
 .form-group {
   margin-bottom: 20px;
 }
@@ -109,7 +106,6 @@
   resize: vertical;
 }
 
-/* Кнопки */
 .profile-actions {
   display: flex;
   flex-direction: column;
@@ -173,7 +169,7 @@
   background-color: #1a2635;
 }
 
-/* Модальные окна */
+
 .modal {
   display: none;
   position: fixed;
@@ -208,7 +204,6 @@
 .close:hover {
   color: #2c3e50;
 }
-/* Стили для выпадающего списка */
 .form-group select {
   width: 100%;
   max-width: 400px;
@@ -234,7 +229,6 @@
   box-shadow: 0 0 0 3px rgba(32, 65, 255, 0.1);
 }
 
-/* Стили для опций */
 .form-group select option {
   padding: 10px 15px;
   color: #2c3e50;
@@ -250,13 +244,11 @@
   color: white;
 }
 
-/* Стили для disabled состояния */
 .form-group select:disabled {
   background-color: #f8f9fa;
   color: #95a5a6;
   cursor: not-allowed;
 }
-/* Адаптивность */
 @media (max-width: 992px) {
   .profile-content {
     left: 80px;

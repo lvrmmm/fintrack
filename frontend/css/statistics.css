@@ -1,7 +1,5 @@
-/* statistics.css */
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@600;700&display=swap");
 
-/* Основные стили */
 .statistics-content {
   display: grid;
   grid-template-columns: repeat(12, 1fr);
@@ -9,39 +7,35 @@
   padding: 30px;
 }
 
-.column-1 {
-  grid-column: span 5;
+
+.column-1, .column-2, .column-3 {
   display: flex;
   flex-direction: column;
   gap: 25px;
 }
 
+.column-1 {
+  grid-column: span 4;
+}
+
 .column-2 {
-  grid-column: span 3;
-  display: flex;
-  flex-direction: column;
-  gap: 25px;
+  grid-column: span 4;
 }
 
 .column-3 {
   grid-column: span 4;
-  display: flex;
-  flex-direction: column;
-  gap: 25px;
 }
 
-/* Общие стили карточек */
 .balance-card,
 .progress-card,
 .transactions-card,
-.health-card,
-.goals-card {
+.goals-card,
+.health-card {
   background: var(--white);
   border-radius: var(--border-radius);
   box-shadow: var(--box-shadow);
   padding: 25px;
   transition: var(--transition);
-  width: 100%;
 }
 
 .card-header {
@@ -59,13 +53,18 @@
   font-family: "Manrope", sans-serif;
 }
 
-/* Элементы управления */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 .period-select {
   padding: 8px 12px;
-  border: 1px solid #e0e3e7;
   border-radius: 8px;
-  font-size: 14px;
+  border: 1px solid #e0e3e7;
   background-color: var(--white);
+  font-size: 14px;
   color: var(--dark);
   cursor: pointer;
   transition: var(--transition);
@@ -74,39 +73,6 @@
 .period-select:focus {
   outline: none;
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(32, 65, 255, 0.1);
-}
-
-/* Контейнеры графиков */
-.progress-chart,
-.transactions-chart,
-.monthly-chart {
-  position: relative;
-  width: 100%;
-  height: 250px;
-  margin-bottom: 15px;
-}
-
-/* Стили для карточек с детализацией */
-.scrollable-card {
-  transition: height 0.3s ease;
-  overflow: hidden;
-}
-
-.scrollable-card.active {
-  height: auto;
-}
-
-.scrollable-card.active .details-content {
-  display: block;
-  animation: fadeIn 0.3s ease-out;
-}
-
-.details-content {
-  display: none;
-  margin-top: 20px;
-  padding-top: 20px;
-  border-top: 1px solid #f0f2f5;
 }
 
 .details-btn {
@@ -116,31 +82,45 @@
   background: none;
   border: none;
   color: var(--primary);
-  font-size: 14px;
   font-weight: 500;
+  font-size: 14px;
   cursor: pointer;
-  padding: 5px 10px;
-  border-radius: 6px;
   transition: var(--transition);
 }
 
 .details-btn:hover {
-  background-color: #f0f7ff;
+  color: #1a35e0;
 }
 
 .details-btn i {
   transition: transform 0.3s ease;
 }
 
-.scrollable-card.active .details-btn i {
-  transform: rotate(90deg);
+/* Стили для графиков */
+.progress-chart,
+.transactions-chart,
+.monthly-chart {
+  position: relative;
+  width: 100%;
+  height: 250px;
+  margin-bottom: 20px;
 }
 
-/* Таблица сравнения месяцев */
+.details-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+
+.scrollable-card.active .details-content {
+  max-height: 500px;
+  overflow-y: auto;
+}
+
 .comparison-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 14px;
+  margin-top: 15px;
 }
 
 .comparison-table th,
@@ -153,10 +133,19 @@
 .comparison-table th {
   font-weight: 600;
   color: var(--gray);
+  font-size: 14px;
 }
 
-.comparison-table tr:hover {
-  background-color: #f9f9f9;
+.comparison-table td {
+  font-size: 15px;
+}
+
+.comparison-table tr:last-child td {
+  border-bottom: none;
+}
+
+.comparison-table .difference-cell {
+  font-weight: 600;
 }
 
 .comparison-table .positive {
@@ -169,63 +158,75 @@
   font-weight: 600;
 }
 
-/* Список категорий расходов */
+.comparison-table .current-month.higher {
+  color: var(--danger);
+}
+
+.comparison-table .current-month.lower {
+  color: var(--success);
+}
+
+.comparison-table .previous-month {
+  color: var(--gray);
+}
+
 .categories-list {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  margin-top: 15px;
 }
 
 .category-item {
-  display: grid;
-  grid-template-columns: 20px 1fr auto auto;
+  display: flex;
   align-items: center;
-  gap: 15px;
-  padding: 12px;
+  padding: 12px 15px;
+  background-color: #f8f9fa;
   border-radius: 8px;
-  transition: var(--transition);
-}
-
-.category-item:hover {
-  background-color: #f9f9f9;
 }
 
 .category-color {
-  width: 16px;
-  height: 16px;
-  border-radius: 4px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 12px;
 }
 
 .category-name {
-  font-weight: 500;
+  flex: 1;
+  font-size: 15px;
   color: var(--dark);
 }
 
 .category-amount {
   font-weight: 600;
   color: var(--danger);
+  margin-right: 15px;
 }
 
 .category-percent {
+  font-weight: 600;
   color: var(--gray);
-  font-size: 13px;
 }
 
-/* Статистика доходов/расходов */
 .stats-summary {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  display: flex;
+  justify-content: space-between;
   gap: 15px;
   margin-top: 20px;
+  flex-wrap: wrap;
 }
 
 .stat-item {
+  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 15px;
   border-radius: 12px;
-  background-color: #f9f9f9;
+  background-color: #f8f9fa;
+    min-width: 120px;
+  box-sizing: border-box;
 }
 
 .stat-item i {
@@ -248,7 +249,12 @@
 .stat-value {
   font-size: 16px;
   font-weight: 700;
-  margin-bottom: 3px;
+  margin-bottom: 5px;
+  white-space: nowrap; 
+  overflow: hidden; 
+  text-overflow: ellipsis; 
+  max-width: 100%; 
+
 }
 
 .stat-item.income .stat-value {
@@ -264,16 +270,8 @@
 }
 
 .stat-label {
-  font-size: 13px;
+  font-size: 14px;
   color: var(--gray);
-}
-
-/* Карточка финансового здоровья */
-.health-card {
-  background: var(--white);
-  border-radius: var(--border-radius);
-  box-shadow: var(--box-shadow);
-  padding: 25px;
 }
 
 .health-metrics {
@@ -284,13 +282,14 @@
 
 .metric-item {
   display: flex;
-  gap: 15px;
+  align-items: center;
+  gap: 20px;
 }
 
 .metric-progress {
   position: relative;
-  width: 60px;
-  height: 60px;
+  width: 80px;
+  height: 80px;
 }
 
 .circular-progress {
@@ -304,28 +303,20 @@
   height: 100%;
 }
 
-.circular-progress .progress-bg {
+.progress-bg {
   fill: none;
   stroke: #f0f2f5;
-  stroke-width: 3;
+  stroke-width: 4;
 }
 
-.circular-progress .progress-bar {
+.progress-bar {
   fill: none;
   stroke: var(--primary);
-  stroke-width: 3;
+  stroke-width: 4;
   stroke-linecap: round;
   transform: rotate(-90deg);
   transform-origin: 50% 50%;
   transition: stroke-dasharray 0.6s ease;
-}
-
-.metric-item:nth-child(1) .progress-bar {
-  stroke: var(--success);
-}
-
-.metric-item:nth-child(2) .progress-bar {
-  stroke: var(--warning);
 }
 
 .progress-value {
@@ -333,7 +324,7 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  font-size: 14px;
+  font-size: 18px;
   font-weight: 700;
   color: var(--dark);
 }
@@ -343,16 +334,16 @@
 }
 
 .metric-info h3 {
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 600;
+  margin-bottom: 5px;
   color: var(--dark);
-  margin: 0 0 5px 0;
 }
 
 .metric-info p {
-  font-size: 13px;
+  font-size: 14px;
   color: var(--gray);
-  margin: 0 0 10px 0;
+  margin-bottom: 10px;
 }
 
 .metric-range {
@@ -365,27 +356,21 @@
 .range-fill {
   height: 100%;
   background-color: var(--primary);
+  border-radius: 3px;
   transition: width 0.6s ease;
 }
 
-.metric-item:nth-child(1) .range-fill {
-  background-color: var(--success);
-}
-
-.metric-item:nth-child(2) .range-fill {
-  background-color: var(--warning);
-}
-
-/* Подсказки */
 .tooltip-container {
   position: relative;
   display: inline-block;
+  margin-left: 8px;
 }
 
 .health-tooltip {
   color: var(--gray);
   cursor: pointer;
-  transition: var(--transition);
+  font-size: 18px;
+  transition: color 0.2s ease;
 }
 
 .health-tooltip:hover {
@@ -394,12 +379,12 @@
 
 .tooltip-text {
   visibility: hidden;
-  width: 200px;
+  width: 250px;
   background-color: var(--dark);
   color: var(--white);
   text-align: center;
-  border-radius: 6px;
-  padding: 10px;
+  border-radius: 8px;
+  padding: 10px 15px;
   position: absolute;
   z-index: 1;
   bottom: 125%;
@@ -407,19 +392,9 @@
   transform: translateX(-50%);
   opacity: 0;
   transition: opacity 0.3s;
-  font-size: 13px;
-  line-height: 1.4;
-}
-
-.tooltip-text::after {
-  content: "";
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  margin-left: -5px;
-  border-width: 5px;
-  border-style: solid;
-  border-color: var(--dark) transparent transparent transparent;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
 }
 
 .tooltip-container:hover .tooltip-text {
@@ -427,7 +402,6 @@
   opacity: 1;
 }
 
-/* Анимации */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -439,55 +413,89 @@
   }
 }
 
-/* Адаптация для больших экранов (1200px) */
+.progress-chart,
+.transactions-chart,
+.monthly-chart {
+  animation: fadeIn 0.5s ease-out;
+}
+
+@media (max-width: 1400px) {
+  .statistics-content {
+    padding: 25px;
+  }
+  
+  .column-1, .column-2, .column-3 {
+    gap: 20px;
+  }
+  
+  .balance-card,
+  .progress-card,
+  .transactions-card,
+  .goals-card,
+  .health-card {
+    padding: 20px;
+  }
+}
+
 @media (max-width: 1200px) {
   .statistics-content {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(8, 1fr);
   }
   
   .column-1 {
-    grid-column: span 1;
+    grid-column: span 8;
   }
   
   .column-2 {
-    grid-column: span 1;
+    grid-column: span 4;
   }
   
   .column-3 {
-    grid-column: span 2;
-    grid-template-columns: 1fr 1fr;
-    display: grid;
-    gap: 25px;
-  }
-  
-  .health-card {
-    grid-column: span 1;
+    grid-column: span 4;
   }
 }
 
-/* Адаптация для планшетов (992px) */
 @media (max-width: 992px) {
   .statistics-content {
-    grid-template-columns: 1fr;
     padding: 20px;
+    grid-template-columns: 1fr;
   }
   
-  .column-1,
-  .column-2,
-  .column-3 {
+  .column-1, .column-2, .column-3 {
     grid-column: span 1;
   }
   
-  .column-3 {
-    grid-template-columns: 1fr;
+  .card-header h2 {
+    font-size: 20px;
   }
   
   .stats-summary {
-    grid-template-columns: 1fr;
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .stat-item {
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 12px 15px;
+  }
+  
+  .stat-item i {
+    margin-bottom: 0;
+    margin-right: 12px;
+  }
+  
+  .metric-item {
+    gap: 15px;
+  }
+  
+  .metric-progress {
+    width: 70px;
+    height: 70px;
   }
 }
 
-/* Адаптация для мобильных (768px) */
 @media (max-width: 768px) {
   .statistics-content {
     padding: 15px;
@@ -496,55 +504,93 @@
   .balance-card,
   .progress-card,
   .transactions-card,
-  .health-card,
-  .goals-card {
-    padding: 20px;
+  .goals-card,
+  .health-card {
+    padding: 18px;
   }
   
   .card-header h2 {
-    font-size: 20px;
-  }
-  
-  .comparison-table th,
-  .comparison-table td {
-    padding: 8px 10px;
-    font-size: 13px;
-  }
-  
-  .metric-item {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  
-  .metric-progress {
-    margin-bottom: 10px;
-  }
-}
-
-/* Адаптация для маленьких экранов (576px) */
-@media (max-width: 576px) {
-  .statistics-content {
-    padding: 10px;
+    font-size: 18px;
   }
   
   .progress-chart,
   .transactions-chart,
   .monthly-chart {
-    height: 200px;
+    height: 220px;
   }
   
-  .details-btn {
-    font-size: 13px;
+  .metric-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
   }
   
+  .metric-info {
+    width: 100%;
+  }
   .stats-summary {
-    gap: 10px;
+    flex-direction: column;
   }
   
   .stat-item {
-    padding: 10px;
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 15px;
   }
   
+  .stat-item i {
+    margin-right: 12px;
+    margin-bottom: 0;
+  }
+  
+  .stat-value {
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 576px) {
+  .card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  
+  .header-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .period-select {
+    width: 100%;
+  }
+  
+  .details-btn {
+    align-self: flex-end;
+  }
+  
+  .comparison-table th,
+  .comparison-table td {
+    padding: 8px 10px;
+    font-size: 14px;
+  }
+  
+  .category-item {
+    padding: 10px 12px;
+  }
+  
+  .category-name {
+    font-size: 14px;
+  }
+  
+  .category-amount,
+  .category-percent {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 400px) {
   .stat-value {
     font-size: 14px;
   }

@@ -22,7 +22,6 @@
   padding: 80px 0;
 }
 
-/* Шапка */
 .header {
   background-color: #ffffff;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
@@ -121,7 +120,6 @@
   color: white;
 }
 
-/* Бургер меню */
 .burger-menu {
   display: none;
   cursor: pointer;
@@ -132,7 +130,6 @@
   color: #2c3e50;
 }
 
-/* Главный блок */
 .main-block {
   padding: 180px 0 100px;
   background: #f8f9fa;
@@ -184,7 +181,6 @@
   display: block;
 }
 
-/* Статистика */
 .stats-block {
   background-color: #2041ff;
   color: white;
@@ -212,7 +208,6 @@
   opacity: 0.9;
 }
 
-/* Особенности */
 .features-block {
   padding: 100px 0;
 }
@@ -284,7 +279,6 @@
   line-height: 1.6;
 }
 
-/* Как это работает */
 .steps-block {
   padding: 100px 0;
   background-color: #f8f9fa;
@@ -405,7 +399,6 @@
   margin-left: 5px;
 }
 
-/* Призыв к действию */
 .cta-block {
   padding: 100px 0;
   background: linear-gradient(135deg, #2041ff 0%, #1a36d6 100%);
@@ -438,7 +431,6 @@
   background-color: #f0f0f0;
 }
 
-/* Подвал */
 .footer {
   background-color: #2c3e50;
   color: #ffffff;
@@ -484,7 +476,6 @@
   color: #ffffff;
 }
 
-/* Адаптивность */
 @media (max-width: 768px) {
   .nav-list {
     display: none;

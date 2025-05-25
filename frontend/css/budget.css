@@ -178,7 +178,7 @@ body {
   flex: 1;
   padding: 30px;
   overflow-y: auto;
-  margin-top: 20px; /* Дополнительный отступ от шапки */
+  margin-top: 20px; 
 }
 
 .budget-page {

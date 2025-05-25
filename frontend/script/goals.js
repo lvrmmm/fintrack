@@ -1,5 +1,4 @@
 document.addEventListener("DOMContentLoaded", function () {
-  // Конфигурация
   const apiBaseUrl = "http://localhost:8080";
   const token = localStorage.getItem("token"); // Получаем токен из localStorage
 
@@ -9,13 +8,11 @@ document.addEventListener("DOMContentLoaded", function () {
     return;
   }
 
-  // Настройка заголовков для запросов
   const headers = {
     "Content-Type": "application/json",
     Authorization: `Bearer ${token}`,
   };
 
-  // DOM Elements
   const goalsList = document.getElementById("goals-list");
   const addGoalBtn = document.getElementById("add-goal");
   const goalModal = document.getElementById("goal-modal");
@@ -29,7 +26,6 @@ document.addEventListener("DOMContentLoaded", function () {
   let currentGoalId = null;
   let isEditMode = false;
 
-  // Event Listeners
   addGoalBtn.addEventListener("click", openAddGoalModal);
   closeModalBtn.addEventListener("click", closeModal);
   document.querySelectorAll(".close-modal").forEach((btn) => {
@@ -38,11 +34,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
   goalForm.addEventListener("submit", handleGoalSubmit);
 
-  // Initialize the page
   fetchGoals();
   fetchStats();
 
-  // Functions
   function openAddGoalModal() {
     isEditMode = false;
     currentGoalId = null;
@@ -116,7 +110,6 @@ document.addEventListener("DOMContentLoaded", function () {
       });
 
       if (response.status === 401) {
-        // Если токен недействителен, перенаправляем на страницу входа
         window.location.href = "/frontend/sign-in.html";
         return;
       }
@@ -139,7 +132,6 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
-    // Sort goals: completed last, then by deadline
     goals.sort((a, b) => {
       if (a.completed && !b.completed) return 1;
       if (!a.completed && b.completed) return -1;
@@ -148,17 +140,14 @@ document.addEventListener("DOMContentLoaded", function () {
       const aDeadline = new Date(a.deadline);
       const bDeadline = new Date(b.deadline);
 
-      // Overdue goals come first
       if (aDeadline < now && bDeadline >= now) return -1;
       if (aDeadline >= now && bDeadline < now) return 1;
 
-      // Then sort by deadline (earlier first)
       return aDeadline - bDeadline;
     });
 
     goalsList.innerHTML = goals.map((goal) => createGoalCard(goal)).join("");
 
-    // Add event listeners to all action buttons
     document.querySelectorAll(".btn-complete").forEach((btn) => {
       btn.addEventListener("click", handleCompleteGoal);
     });
@@ -479,7 +468,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  // Helper functions
   function getPriorityLabel(priority) {
     const labels = {
       LOW: "Низкий",
@@ -515,7 +503,6 @@ document.addEventListener("DOMContentLoaded", function () {
       .replace(/\s/g, " ");
   }
 
-  // Close modal when clicking outside
   window.addEventListener("click", (e) => {
     if (e.target === goalModal) {
       closeModal();

@@ -1,8 +1,6 @@
-// .................................................
 document.addEventListener("DOMContentLoaded", function () {
   console.log(localStorage.getItem("token"));
 
-  // Конфигурация
   const config = {
     apiBaseUrl: "http://localhost:8080/api/budget",
     transactionUrl: "http://localhost:8080/api/transactions",
@@ -24,7 +22,6 @@ document.addEventListener("DOMContentLoaded", function () {
       { code: "EUR", symbol: "€", rate: 0.01 },
     ],
     categoryIcons: {
-      // Расходы (только траты)
       GROCERIES: "bx-shopping-bag",
       TRANSPORT: "bx-car",
       UTILITIES: "bx-home",
@@ -35,13 +32,11 @@ document.addEventListener("DOMContentLoaded", function () {
       TRAVEL: "bx-plane",
       OTHER_EXPENSE: "bx-category",
 
-      // Доходы (только поступления)
       SALARY: "bx-money",
       INVESTMENTS: "bx-trending-up",
       OTHER_INCOME: "bx-coin",
     },
     categoryNames: {
-      // Расходы
       GROCERIES: "Продукты",
       TRANSPORT: "Транспорт",
       UTILITIES: "Жильё",
@@ -51,13 +46,11 @@ document.addEventListener("DOMContentLoaded", function () {
       CLOTHING: "Одежда",
       TRAVEL: "Путешествия",
 
-      // Доходы
       SALARY: "Зарплата",
       INVESTMENTS: "Инвестиции",
       GIFT: "Подарки",
       OTHER_INCOME: "Другое",
     },
-    // Категории расходов (только траты)
     expenseCategories: [
       "GROCERIES",
       "TRANSPORT",
@@ -69,16 +62,14 @@ document.addEventListener("DOMContentLoaded", function () {
       "TRAVEL",
     ],
 
-    // Категории ДОХОДОВ (только поступления)
     incomeCategories: ["SALARY", "INVESTMENTS", "GIFT"],
   };
 
-  // Состояние приложения
   const state = {
     currentCurrency: config.currencies[0],
     budgetData: {
-      expenses: [], // Только расходы
-      income: [], // Только доходы
+      expenses: [], 
+      income: [],
     },
     currentMonth: "",
     isLoading: false,
@@ -93,13 +84,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
   tabButtons.forEach((button) => {
     button.addEventListener("click", function () {
-      // Удаляем активный класс у всех кнопок
       tabButtons.forEach((btn) => btn.classList.remove("active"));
 
-      // Добавляем активный класс текущей кнопке
       this.classList.add("active");
 
-      // Определяем, какую вкладку показывать
       if (this.dataset.tab === "expenses") {
         expenseTab.style.display = "block";
         incomeTab.style.display = "none";
@@ -116,7 +104,6 @@ document.addEventListener("DOMContentLoaded", function () {
   expenseTab.style.display = "block";
   incomeTab.style.display = "none";
 
-  // Элементы DOM
   const elements = {
     expenseCategories: document.querySelector(".expense-categories"),
     incomeCategories: document.querySelector(".income-categories"),
@@ -128,7 +115,6 @@ document.addEventListener("DOMContentLoaded", function () {
     closeModalBtn: document.querySelector(".close-modal"),
     currencyToggle: document.getElementById("currency-toggle"),
     monthSelect: document.getElementById("month-select"),
-    // exportReportBtn: document.getElementById("export-report"),
     notificationBadge: document.querySelector(".notification-badge"),
     notificationsDropdown: document.querySelector(".notifications-dropdown"),
     statValues: document.querySelectorAll(".stat-value"),
@@ -138,20 +124,16 @@ document.addEventListener("DOMContentLoaded", function () {
     budgetChart: null,
   };
 
-  // Инициализация приложения
   initApp();
 
-  // Основные функции
   async function initApp() {
     setupEventListeners();
     await populateMonths();
     await loadBudgetData();
 
-    // Инициализация графика
     initChart();
     updateChart();
 
-    // Инициализируем начальное состояние табов
     document
       .querySelector('.tab-btn[data-tab="expenses"]')
       .classList.add("active");
@@ -214,12 +196,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
       if (!expensesRes.ok || !incomeRes.ok) throw new Error("Ошибка загрузки бюджета");
 
-      // Обработка расходов (без изменений)
       const expensesData = (await expensesRes.json()).filter(item => 
         config.expenseCategories.includes(item.category)
       );
 
-      // Новая обработка доходов - без дублирования
       const rawIncomeData = await incomeRes.json();
       console.log("Raw income data from API:", rawIncomeData); // Для отладки
       
@@ -272,7 +252,6 @@ document.addEventListener("DOMContentLoaded", function () {
     renderIncomeCategories();
     updateStats();
 
-    // Управление видимостью вкладок
     document.querySelector(".expenses-tab").style.display =
       state.activeTab === "expenses" ? "block" : "none";
     document.querySelector(".income-tab").style.display =
@@ -292,7 +271,6 @@ document.addEventListener("DOMContentLoaded", function () {
     return;
   }
 
-  // Сортируем доходы по сумме (от большего к меньшему)
   const sortedIncome = [...state.budgetData.income].sort((a, b) => b.amount - a.amount);
 
   sortedIncome.forEach((item, index) => {
@@ -321,17 +299,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     elements.incomeCategories.appendChild(categoryEl);
   });
-}
-
-// Новая функция для получения подписи к доходу
-function getIncomeLabel(category) {
-  const labels = {
-    SALARY: "Зарплата",
-    INVESTMENTS: "Инвестиции",
-    GIFT: "Подарок",
-    OTHER_INCOME: "Поступление"
-  };
-  return labels[category] || "Доход";
 }
 
   // Исправленная функция отрисовки расходов
@@ -404,7 +371,6 @@ function getIncomeLabel(category) {
     }`;
 
     if (isExpense) {
-      // Логика для расходов (с лимитами и прогрессом)
       const progressClass = item.isOverLimit
         ? "danger"
         : item.progressPercentage >= 85
@@ -439,7 +405,6 @@ function getIncomeLabel(category) {
         </div>
       `;
     } else {
-      // Логика для доходов (просто отображение суммы)
       categoryEl.innerHTML = `
         <div class="category-icon">
           <i class="bx ${config.categoryIcons[item.category]}"></i>
@@ -470,7 +435,7 @@ function getIncomeLabel(category) {
         body: JSON.stringify({
           category: category,
           limit: parseFloat(limit),
-          month: state.currentMonth, // Формат "YYYY-MM"
+          month: state.currentMonth, 
         }),
       });
 
@@ -521,7 +486,6 @@ function getIncomeLabel(category) {
       otherIncome: 0
     };
 
-    // Только расходы - считаем как было
     state.budgetData.expenses.forEach(item => {
       const spent = item.spent || 0;
       stats.totalExpenses += spent;
@@ -546,7 +510,6 @@ function getIncomeLabel(category) {
 
     stats.balance = stats.totalIncome - stats.totalExpenses;
 
-    // Обновляем DOM
     elements.statValues[0].textContent = stats.inBudget;
     elements.statValues[1].textContent = stats.exceeded;
     elements.statValues[2].textContent = formatCurrency(stats.savings);
@@ -561,7 +524,6 @@ function getIncomeLabel(category) {
       state.budgetChart = null;
     }
 
-    // Создаем canvas, если его нет
     if (!document.getElementById("budgetChart")) {
       document.querySelector(".chart-container").innerHTML =
         '<canvas id="budgetChart"></canvas>';
@@ -610,42 +572,16 @@ function getIncomeLabel(category) {
     });
   }
 
-  function setupChartToggle() {
-    document.querySelectorAll(".chart-toggle-btn").forEach((btn) => {
-      btn.addEventListener("click", function () {
-        // Удаляем активный класс у всех кнопок
-        document
-          .querySelectorAll(".chart-toggle-btn")
-          .forEach((b) => b.classList.remove("active"));
-
-        // Добавляем активный класс текущей кнопке
-        this.classList.add("active");
-
-        // Обновляем тип графика
-        state.chartType = this.dataset.type;
-
-        // Показываем canvas перед обновлением
-        if (state.budgetChart) {
-          state.budgetChart.canvas.style.display = "block";
-        }
-
-        // Обновляем график
-        updateChart();
-      });
-    });
-  }
 
   function updateChart() {
     if (!state.budgetChart) {
       initChart();
     }
 
-    // Показываем canvas
     if (state.budgetChart.canvas) {
       state.budgetChart.canvas.style.display = "block";
     }
 
-    // Убираем сообщение об отсутствии данных если оно есть
     const emptyState = document.querySelector(".empty-chart-state");
     if (emptyState) {
       emptyState.remove();
@@ -655,7 +591,6 @@ function getIncomeLabel(category) {
     let data = [];
     let hasData = false;
 
-    // Всегда работаем только с расходами для графика
     state.budgetData.expenses.forEach((item, index) => {
       const value = state.chartType === "limits" ? item.limit : item.spent;
       if (value > 0) {
@@ -670,7 +605,6 @@ function getIncomeLabel(category) {
       return;
     }
 
-    // Обновляем данные графика
     state.budgetChart.data.labels = labels;
     state.budgetChart.data.datasets[0].data = data;
     state.budgetChart.data.datasets[0].backgroundColor = labels.map(
@@ -692,7 +626,6 @@ function getIncomeLabel(category) {
         ? "Нет установленных лимитов"
         : "Нет данных о расходах";
 
-    // Создаем элемент для пустого состояния если его нет
     let emptyState = chartContainer.querySelector(".empty-chart-state");
     if (!emptyState) {
       emptyState = document.createElement("div");
@@ -704,7 +637,6 @@ function getIncomeLabel(category) {
       chartContainer.appendChild(emptyState);
     }
 
-    // Скрываем canvas но не удаляем его
     if (state.budgetChart?.canvas) {
       state.budgetChart.canvas.style.display = "none";
     }
@@ -739,7 +671,6 @@ function getIncomeLabel(category) {
     elements.categorySelect.innerHTML =
       '<option value="">Выберите категорию</option>';
 
-    // Только расходные категории, которые еще не имеют лимита
     const availableCategories = config.expenseCategories.filter(
       (category) =>
         !state.budgetData.expenses.some((item) => item.category === category)
@@ -753,7 +684,6 @@ function getIncomeLabel(category) {
     });
   }
 
-  // Вспомогательные функции
   function formatCurrency(value) {
     if (isNaN(value)) {
       console.error("Некорректное значение для форматирования:", value);
@@ -814,7 +744,6 @@ function getIncomeLabel(category) {
       btn.classList.toggle("active", btn.dataset.tab === tabName);
     });
 
-    // Обновляем только список категорий
     renderCategories();
   }
 
@@ -825,14 +754,11 @@ function getIncomeLabel(category) {
     elements.chartToggleBtns.forEach((btn) => {
       btn.classList.toggle("active", btn.dataset.type === type);
     });
-
-    // Всегда обновляем график, независимо от активного таба
     updateChart();
   }
 
   // Обработчики событий
   function setupEventListeners() {
-    // Открытие модального окна для добавления категории расходов
 
     // Закрытие модального окна
     elements.cancelCategoryBtn.addEventListener("click", closeModal);
@@ -905,7 +831,7 @@ function getIncomeLabel(category) {
           await loadBudgetData();
         } catch (error) {
           console.error("Update error:", error);
-          // Возвращаем старое значение
+          
           const item = state.budgetData.expenses.find(
             (i) => i.category === category
           );
@@ -917,16 +843,12 @@ function getIncomeLabel(category) {
     // Переключение табов
     elements.tabBtns.forEach((btn) => {
       btn.addEventListener("click", function () {
-        // Удаляем активный класс у всех кнопок
         elements.tabBtns.forEach((b) => b.classList.remove("active"));
 
-        // Добавляем активный класс текущей кнопке
         this.classList.add("active");
 
-        // Обновляем активную вкладку в состоянии
         state.activeTab = this.dataset.tab;
 
-        // Обновляем только список категорий (не график)
         renderCategories();
       });
     });
@@ -936,9 +858,6 @@ function getIncomeLabel(category) {
       btn.addEventListener("click", () => switchChartType(btn.dataset.type));
     });
 
-    // Экспорт отчета
-    // elements.exportReportBtn.addEventListener("click", exportReport);
-
     // Клик вне модального окна
     window.addEventListener("click", (e) => {
       if (e.target === elements.expenseCategoryModal) {
@@ -947,15 +866,4 @@ function getIncomeLabel(category) {
     });
   }
 
-  // Экспорт отчета (заглушка)
-  function exportReport() {
-    const month =
-      elements.monthSelect.options[elements.monthSelect.selectedIndex].text;
-    showNotification(`Отчет за ${month} будет сгенерирован`, "info");
-
-    // Реальная реализация с jsPDF
-    // const { jsPDF } = window.jspdf;
-    // const doc = new jsPDF();
-    // ...
-  }
 });

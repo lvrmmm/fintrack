@@ -29,7 +29,6 @@ body {
   color: var(--dark);
 }
 
-/* Main Content Styles */
 .main-content {
   position: relative;
   top: 80px;
@@ -43,7 +42,6 @@ body {
   gap: 25px;
 }
 
-/* Columns Layout */
 .column-1 {
   grid-column: span 4;
   display: flex;
@@ -65,7 +63,7 @@ body {
   gap: 25px;
 }
 
-/* Common Card Styles */
+
 .balance-card,
 .progress-card,
 .transactions-card,
@@ -116,7 +114,6 @@ body {
   font-size: 18px;
 }
 
-/* Balance Card Styles */
 .balance-header {
   display: flex;
   justify-content: space-between;
@@ -187,7 +184,6 @@ body {
   transform: scale(1.05);
 }
 
-/* Chart Containers */
 .progress-chart,
 .transactions-chart,
 .monthly-chart {
@@ -196,7 +192,6 @@ body {
   height: 250px;
 }
 
-/* Recent Transactions & Upcoming Payments */
 .recent-transactions,
 .upcoming-payments {
   display: flex;
@@ -481,7 +476,6 @@ body {
   }
 }
 
-/* Animation for charts loading */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -499,7 +493,6 @@ body {
   animation: fadeIn 0.5s ease-out;
 }
 
-/* Tooltip styles for charts */
 .chart-tooltip {
   background: var(--white) !important;
   border: 1px solid #e0e3e7 !important;

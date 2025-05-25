@@ -21,11 +21,10 @@
   --warning: #f39c12;
 }
 
-/* Main Content Styles */
 .main-content.goals-page {
   position: relative;
-  top: 80px; /* Высота шапки */
-  left: 250px; /* Ширина бокового меню */
+  top: 80px; 
+  left: 250px; 
   width: calc(100% - 250px);
   min-height: calc(100vh - 80px);
   padding: 30px;
@@ -39,7 +38,6 @@
   background-color: transparent;
 }
 
-/* Header Styles */
 .goals-header {
   display: flex;
   justify-content: space-between;
@@ -81,7 +79,6 @@
   font-size: 20px;
 }
 
-/* Goals List Styles */
 .goals-list {
   display: flex;
   flex-direction: column;
@@ -289,7 +286,7 @@
   background-color: #f5d9db;
 }
 
-/* Stats Cards Styles */
+
 .goals-stats {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -549,7 +546,6 @@ select.form-control {
   font-size: 24px;
 }
 
-/* Адаптация для больших экранов (1200px) */
 @media (max-width: 1200px) {
   .main-content.goals-page {
     left: 200px;
@@ -558,10 +554,9 @@ select.form-control {
   }
 }
 
-/* Адаптация для средних экранов (992px) */
 @media (max-width: 992px) {
   .main-content.goals-page {
-    left: 70px; /* Компактная ширина бокового меню */
+    left: 70px; 
     width: calc(100% - 70px);
     padding: 20px;
   }
@@ -579,7 +574,6 @@ select.form-control {
   }
 }
 
-/* Адаптация для планшетов (768px) */
 @media (max-width: 768px) {
   .main-content.goals-page {
     padding: 20px 15px;
@@ -616,7 +610,6 @@ select.form-control {
   }
 }
 
-/* Адаптация для мобильных (576px) */
 @media (max-width: 576px) {
   .main-content.goals-page {
     padding: 15px;
